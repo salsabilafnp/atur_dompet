@@ -91,7 +91,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // register - online
+  // register
   Future<void> register() async {
     if (nameC.text.isEmpty ||
         emailC.text.isEmpty ||

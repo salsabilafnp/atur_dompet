@@ -1,8 +1,8 @@
+import 'package:atur_dompet/core/components/navbar/main_screen.dart';
 import 'package:atur_dompet/modules/auth/controller/splash_controller.dart';
 import 'package:atur_dompet/modules/auth/views/login_page.dart';
 import 'package:atur_dompet/modules/auth/views/register_page.dart';
 import 'package:atur_dompet/modules/auth/views/splash_screen.dart';
-import 'package:atur_dompet/modules/dashboard/views/home_page.dart';
 import 'package:get/get.dart';
 
 class RouteNames {
@@ -10,6 +10,9 @@ class RouteNames {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String transactions = '/transactions';
+  static const String wallets = '/wallets';
+  static const String debts = '/debts';
   static const String profile = '/profile';
   static const String addTransaction = '/add-transaction';
   static const String editTransaction = '/edit-transaction';
@@ -40,7 +43,7 @@ class Routes {
     ),
     GetPage(name: RouteNames.login, page: () => const LoginPage()),
     GetPage(name: RouteNames.register, page: () => const RegisterPage()),
-    GetPage(name: RouteNames.home, page: () => const HomePage()),
+    GetPage(name: RouteNames.home, page: () => const MainScreen()),
     // GetPage(
     //   name: RouteNames.profile,
     //   page: () => const ProfileScreen(),

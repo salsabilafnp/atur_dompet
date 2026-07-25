@@ -1,5 +1,7 @@
 class Dictionary {
   static const String appTitle = 'AturDompet';
+  static const String appDescription =
+      'An app to help you manage your finances as a personal financial tracker and management simple tool.';
 
   /// Splash Screen
   static const String splashTitle =
@@ -22,16 +24,28 @@ class Dictionary {
   /// Menu
   static const String home = 'Home';
   static const String profile = 'Profile';
+  static const String transactions = 'Transaction';
+  static const String category = 'Category';
+  static const String wallets = 'Wallet';
+  static const String debts = 'Debt & Loan';
+  static const String debtLogs = 'Debt Logs';
+  // Transaction
   static const String addTransaction = 'Add Transaction';
   static const String editTransaction = 'Edit Transaction';
   static const String transactionDetail = 'Transaction Detail';
+  // Category
   static const String addCategory = 'Add Category';
   static const String editCategory = 'Edit Category';
+  // Wallet
   static const String addWallet = 'Add Wallet';
   static const String editWallet = 'Edit Wallet';
+  // Debts
   static const String addDebts = 'Add Debts';
   static const String editDebts = 'Edit Debts';
   static const String debtsDetail = 'Debts Detail';
+  // Debt Logs
+  static const String addDebtLog = 'Add Debt Log';
+  static const String editDebtLog = 'Edit Debt Log';
 
   /// Notification
   // Alert

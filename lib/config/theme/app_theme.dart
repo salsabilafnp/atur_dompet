@@ -105,7 +105,7 @@ class AppTheme {
 
     // Typography
     textTheme: _buildTextTheme(black),
-
+    
     // Card Theme (Default: 3px border, 0 radius, 0 elevation)
     cardTheme: const CardThemeData(
       color: white,

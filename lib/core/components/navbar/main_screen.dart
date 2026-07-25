@@ -1,0 +1,84 @@
+import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/core/components/navbar/navbar_controller.dart';
+import 'package:atur_dompet/modules/dashboard/views/home_page.dart';
+import 'package:atur_dompet/modules/debts/views/debts_page.dart';
+import 'package:atur_dompet/modules/transactions/views/transaction_page.dart';
+import 'package:atur_dompet/modules/wallets/views/wallets_page.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.put(NavbarController());
+
+    // Main Pages
+    final List<Widget> pages = [
+      const HomePage(),
+      const TransactionsPage(),
+      const WalletsPage(),
+      const DebtsPage(),
+    ];
+
+    return Obx(
+      () => Scaffold(
+        body: IndexedStack(
+          index: controller.selectedIndex.value,
+          children: pages,
+        ),
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            border: Border(top: BorderSide(color: Colors.black, width: 2)),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: controller.selectedIndex.value,
+            onTap: controller.changeTabIndex,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.black,
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels: true,
+            selectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 12,
+            ),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: Dictionary.home,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.receipt_long_outlined),
+                activeIcon: Icon(Icons.receipt_long),
+                label: Dictionary.transactions,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_balance_wallet_outlined),
+                activeIcon: Icon(Icons.account_balance_wallet),
+                label: Dictionary.wallets,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.money_off_outlined),
+                activeIcon: Icon(Icons.handshake),
+                label: Dictionary.debts,
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.black,
+          tooltip: Dictionary.addTransaction,
+          child: const Icon(Icons.add, color: Colors.white),
+          onPressed: () {},
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ),
+    );
+  }
+}
