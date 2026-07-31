@@ -5,7 +5,6 @@ class CategoryTransaction {
   final String type; // 'income' atau 'expense'
   final String? icon;
   final String? color;
-  final bool isDefault;
 
   CategoryTransaction({
     required this.id,
@@ -14,7 +13,6 @@ class CategoryTransaction {
     required this.type,
     this.icon,
     this.color,
-    required this.isDefault,
   });
 
   factory CategoryTransaction.fromJson(Map<String, dynamic> json) {
@@ -25,7 +23,6 @@ class CategoryTransaction {
       type: json['type'] as String,
       icon: json['icon'] as String?,
       color: json['color'] as String?,
-      isDefault: json['is_default'] as bool,
     );
   }
 

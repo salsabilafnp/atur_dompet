@@ -11,7 +11,6 @@ class CategoryRepository {
           .from('categories')
           .select()
           .eq('type', type)
-          .order('is_default', ascending: false)
           .order('name', ascending: true);
 
       return response
@@ -38,7 +37,6 @@ class CategoryRepository {
         'type': type,
         'icon': icon,
         'color': color,
-        'is_default': false,
       });
     } catch (e) {
       throw Exception('Gagal membuat kategori baru: $e');
@@ -49,6 +47,7 @@ class CategoryRepository {
   Future<void> updateCategory({
     required String categoryId,
     required String name,
+    required String type,
     String? icon,
     String? color,
   }) async {
@@ -57,6 +56,7 @@ class CategoryRepository {
           .from('categories')
           .update({
             'name': name,
+            'type': type,
             'icon': icon,
             'color': color,
             'updated_at': DateTime.now().toIso8601String(),

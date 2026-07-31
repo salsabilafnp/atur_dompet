@@ -66,6 +66,7 @@ class Dictionary {
   static const String editDebtLog = 'Edit Debt Log';
 
   /// Notification
+  static const String noCategory = 'No category data.';
   // Alert
   static const String succLogin = 'Login successfully';
   static const String succRegister = 'Register successfully';
@@ -101,6 +102,7 @@ class Dictionary {
   static const String cancelBtn = 'Cancel';
   static const String confirmBtn = 'Confirm';
   static const String saveBtn = 'Save';
+  static const String updateBtn = 'Update';
   static const String loginBtn = 'Login';
   static const String registerBtn = 'Register';
   static const String logoutBtn = 'Logout';

@@ -41,6 +41,7 @@ class CategoryController extends GetxController {
   // Add Category
   Future<void> addCategory({
     required String name,
+    required String type,
     String? icon,
     String? color,
   }) async {
@@ -51,7 +52,6 @@ class CategoryController extends GetxController {
 
     try {
       isLoading.value = true;
-      final type = selectedTab.value == 0 ? 'income' : 'expense';
 
       await _repository.createCategory(
         name: name.trim(),
@@ -75,19 +75,16 @@ class CategoryController extends GetxController {
   Future<bool> editCategory(
     CategoryTransaction category, {
     required String newName,
+    required String type,
     String? newIcon,
     String? newColor,
   }) async {
-    if (category.isDefault) {
-      CustomNotification.showError("Kategori bawaan sistem tidak bisa diubah.");
-      return false;
-    }
-
     isLoading.value = true;
     try {
       await _repository.updateCategory(
         categoryId: category.id,
         name: newName,
+        type: type,
         icon: newIcon,
         color: newColor,
       );
@@ -106,15 +103,7 @@ class CategoryController extends GetxController {
   }
 
   // Delete Category
-
   Future<bool> removeCategory(CategoryTransaction category) async {
-    if (category.isDefault) {
-      CustomNotification.showError(
-        "Kategori bawaan sistem tidak bisa dihapus.",
-      );
-      return false;
-    }
-
     isLoading.value = true;
     try {
       await _repository.deleteCategory(category.id);

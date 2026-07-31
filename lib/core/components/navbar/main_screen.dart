@@ -58,6 +58,7 @@ class MainScreen extends StatelessWidget {
                 activeIcon: Icon(Icons.receipt_long),
                 label: Dictionary.transactions,
               ),
+
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_balance_wallet_outlined),
                 activeIcon: Icon(Icons.account_balance_wallet),
