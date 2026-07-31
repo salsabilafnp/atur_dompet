@@ -1,8 +1,11 @@
 import 'package:atur_dompet/core/components/navbar/main_screen.dart';
 import 'package:atur_dompet/modules/auth/controller/splash_controller.dart';
 import 'package:atur_dompet/modules/auth/views/login_page.dart';
+import 'package:atur_dompet/modules/auth/views/profile_page.dart';
 import 'package:atur_dompet/modules/auth/views/register_page.dart';
 import 'package:atur_dompet/modules/auth/views/splash_screen.dart';
+import 'package:atur_dompet/modules/categories/controllers/category_controller.dart';
+import 'package:atur_dompet/modules/categories/views/category_page.dart';
 import 'package:get/get.dart';
 
 class RouteNames {
@@ -11,6 +14,7 @@ class RouteNames {
   static const String register = '/register';
   static const String home = '/home';
   static const String transactions = '/transactions';
+  static const String category = '/category';
   static const String wallets = '/wallets';
   static const String debts = '/debts';
   static const String profile = '/profile';
@@ -41,52 +45,56 @@ class Routes {
         Get.put(SplashController());
       }),
     ),
-    GetPage(name: RouteNames.login, page: () => const LoginPage()),
-    GetPage(name: RouteNames.register, page: () => const RegisterPage()),
-    GetPage(name: RouteNames.home, page: () => const MainScreen()),
-    // GetPage(
-    //   name: RouteNames.profile,
-    //   page: () => const ProfileScreen(),
-    // ),
+    GetPage(name: RouteNames.login, page: () => LoginPage()),
+    GetPage(name: RouteNames.register, page: () => RegisterPage()),
+    GetPage(name: RouteNames.home, page: () => MainScreen()),
+    GetPage(name: RouteNames.profile, page: () => ProfilePage()),
     // GetPage(
     //   name: RouteNames.addTransaction,
-    //   page: () => const AddTransactionScreen(),
+    //   page: () => AddTransactionScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.editTransaction,
-    //   page: () => const EditTransactionScreen(),
+    //   page: () => EditTransactionScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.transactionDetail,
-    //   page: () => const TransactionDetailScreen(),
+    //   page: () => TransactionDetailScreen(),
     // ),
+    GetPage(
+      name: RouteNames.category,
+      page: () => CategoryPage(),
+      binding: BindingsBuilder(() {
+        Get.put(CategoryController());
+      }),
+    ),
     // GetPage(
     //   name: RouteNames.addCategory,
-    //   page: () => const AddCategoryScreen(),
+    //   page: () => AddCategoryScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.editCategory,
-    //   page: () => const EditCategoryScreen(),
+    //   page: () => EditCategoryScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.addWallet,
-    //   page: () => const AddWalletScreen(),
+    //   page: () => AddWalletScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.editWallet,
-    //   page: () => const EditWalletScreen(),
+    //   page: () => EditWalletScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.addDebts,
-    //   page: () => const AddDebtsScreen(),
+    //   page: () => AddDebtsScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.editDebts,
-    //   page: () => const EditDebtsScreen(),
+    //   page: () => EditDebtsScreen(),
     // ),
     // GetPage(
     //   name: RouteNames.debtsDetail,
-    //   page: () => const DebtsDetailScreen(),
+    //   page: () => DebtsDetailScreen(),
     // ),
   ];
 }

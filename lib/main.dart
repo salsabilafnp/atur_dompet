@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
         theme: themeController.currentTheme.value,
         initialRoute: RouteNames.initial,
         getPages: Routes.pages,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

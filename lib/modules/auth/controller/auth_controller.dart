@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:atur_dompet/config/utils/dictionary.dart';
 import 'package:atur_dompet/config/utils/route.dart';
 import 'package:atur_dompet/core/components/custom_notification.dart';
+import 'package:atur_dompet/core/models/user_profile.dart';
 import 'package:atur_dompet/core/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,8 @@ class AuthController extends GetxController {
 
   // state
   final Rx<User?> currentUser = Rx<User?>(null);
-  final Rx<Map<String, dynamic>?> userProfile = Rx<Map<String, dynamic>?>(null);
+  final Rx<UserProfile?> userProfile = Rx<UserProfile?>(null);
+
   var isLoading = false.obs;
   var isObsecurePass = true.obs;
   var isObsecureConfirmPass = true.obs;
@@ -58,18 +60,23 @@ class AuthController extends GetxController {
     });
   }
 
-  /// Functions
   // fetch profile data
   Future<void> fetchProfileData(String uid) async {
+    isLoading.value = true;
+
     try {
       final data = await _authRepo.getUserProfile(uid);
       userProfile.value = data;
+
+      isLoading.value = false;
     } catch (e) {
       log('Gagal mengambil data profil: $e');
+
+      isLoading.value = false;
     }
   }
 
-  // login
+  // login (AUTH-02)
   Future<void> login() async {
     if (emailC.text.isEmpty || passwordC.text.isEmpty) {
       CustomNotification.showError(Dictionary.formIsRequired);
@@ -91,7 +98,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // register
+  // register (AUTH-01)
   Future<void> register() async {
     if (nameC.text.isEmpty ||
         emailC.text.isEmpty ||
@@ -142,11 +149,11 @@ class AuthController extends GetxController {
   }
 
   // edit profile
-  Future<void> updateProfile(String name, String email, String phone) async {
+  Future<void> updateProfile(String name, String email) async {
     try {
       isLoading.value = true;
 
-      await _authRepo.updateProfile(name, email, phone);
+      await _authRepo.updateProfile(name, email);
 
       if (currentUser.value != null) {
         await fetchProfileData(currentUser.value!.id);
@@ -162,7 +169,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // logout
+  // logout (AUTH-02)
   Future<void> logout() async {
     Get.defaultDialog(
       title: Dictionary.logout,
@@ -177,7 +184,7 @@ class AuthController extends GetxController {
     );
   }
 
-  // change password
+  // change password (AUTH-04)
   Future<void> updatePassword() async {
     // check new password & confirm password
     if (newPasswordC.text != newConfirmPasswordC.text) {
@@ -199,7 +206,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // forgot password
+  // forgot password (AUTH-03)
   Future<void> forgotPassword() async {
     if (emailC.text.isEmpty) {
       CustomNotification.showError(Dictionary.formIsRequired);

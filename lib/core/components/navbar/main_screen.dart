@@ -1,9 +1,9 @@
 import 'package:atur_dompet/config/utils/dictionary.dart';
 import 'package:atur_dompet/core/components/navbar/navbar_controller.dart';
 import 'package:atur_dompet/modules/dashboard/views/home_page.dart';
-import 'package:atur_dompet/modules/debts/views/debts_page.dart';
+import 'package:atur_dompet/modules/debts/views/debt_page.dart';
 import 'package:atur_dompet/modules/transactions/views/transaction_page.dart';
-import 'package:atur_dompet/modules/wallets/views/wallets_page.dart';
+import 'package:atur_dompet/modules/wallets/views/wallet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -64,18 +64,25 @@ class MainScreen extends StatelessWidget {
                 label: Dictionary.wallets,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.money_off_outlined),
-                activeIcon: Icon(Icons.handshake),
+                icon: Icon(Icons.monetization_on_outlined),
+                activeIcon: Icon(Icons.monetization_on),
                 label: Dictionary.debts,
               ),
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.black,
-          tooltip: Dictionary.addTransaction,
-          child: const Icon(Icons.add, color: Colors.white),
-          onPressed: () {},
+        floatingActionButton: Container(
+          decoration: BoxDecoration(
+            color: Colors.black,
+            border: Border.all(color: Colors.black, width: 2),
+            boxShadow: const [
+              BoxShadow(color: Colors.grey, offset: Offset(4, 4)),
+            ],
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.add, color: Colors.white, size: 30),
+            onPressed: () => controller.changeTabIndex(1),
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),

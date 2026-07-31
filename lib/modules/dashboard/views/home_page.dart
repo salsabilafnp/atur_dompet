@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar.home(nickname: "Salsabila"),
+      appBar: CustomAppBar.home(),
       body: const Center(child: Text('Welcome to the Home Page!')),
     );
   }

@@ -25,22 +25,28 @@ class AppTheme {
     return TextTheme(
       // Headlines - Archivo Black
       displayLarge: GoogleFonts.archivoBlack(
-        fontSize: 64,
+        fontSize: 48,
         height: 1.0,
         color: textColor,
       ),
       displayMedium: GoogleFonts.archivoBlack(
-        fontSize: 48,
+        fontSize: 32,
         height: 1.05,
         color: textColor,
       ),
       displaySmall: GoogleFonts.archivoBlack(
-        fontSize: 32,
+        fontSize: 28,
         height: 1.1,
         color: textColor,
       ),
       headlineMedium: GoogleFonts.workSans(
-        fontSize: 22,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        height: 1.2,
+        color: textColor,
+      ),
+      headlineSmall: GoogleFonts.workSans(
+        fontSize: 18,
         fontWeight: FontWeight.w600,
         height: 1.2,
         color: textColor,
@@ -105,7 +111,7 @@ class AppTheme {
 
     // Typography
     textTheme: _buildTextTheme(black),
-    
+
     // Card Theme (Default: 3px border, 0 radius, 0 elevation)
     cardTheme: const CardThemeData(
       color: white,

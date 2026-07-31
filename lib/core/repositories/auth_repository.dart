@@ -1,9 +1,10 @@
+import 'package:atur_dompet/core/models/user_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRepository {
   final SupabaseClient _client = Supabase.instance.client;
 
-  // login
+  // login (AUTH-02)
   Future<AuthResponse?> login(String email, String password) async {
     return await _client.auth.signInWithPassword(
       email: email,
@@ -11,7 +12,7 @@ class AuthRepository {
     );
   }
 
-  // register
+  // register (AUTH-01)
   Future<AuthResponse?> register(
     String nickname,
     String email,
@@ -26,9 +27,15 @@ class AuthRepository {
     return response;
   }
 
-  Future<Map<String, dynamic>?> getUserProfile(String uid) async {
+  // see profile (AUTH-05)
+  Future<UserProfile?> getUserProfile(String uid) async {
     try {
-      return await _client.from('profiles').select().eq('id', uid).single();
+      final data = await _client
+          .from('profiles')
+          .select()
+          .eq('id', uid)
+          .single();
+      return UserProfile.fromJson(data);
     } catch (e) {
       return null;
     }
@@ -44,28 +51,35 @@ class AuthRepository {
     return _client.auth.currentSession;
   }
 
-  // logout
+  // logout (AUTH-02)
   Future<void> logout() async {
     await _client.auth.signOut();
   }
 
   // update profile
-  Future<UserResponse> updateProfile(
-    String name,
-    String email,
-    String phone,
-  ) async {
-    return await _client.auth.updateUser(
-      UserAttributes(email: email, data: {'display_name': name}),
+  Future<void> updateProfile(String? name, String? email) async {
+    final uid = _client.auth.currentUser!.id;
+
+    await _client.auth.updateUser(
+      UserAttributes(email: email ?? '', data: {'display_name': name ?? ''}),
     );
+
+    await _client
+        .from('profiles')
+        .update({
+          'nickname': name ?? '',
+          'email': email ?? '',
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', uid);
   }
 
-  // update password
+  // update password (AUTH-04)
   Future<void> updatePassword(String newPassword) async {
     await _client.auth.updateUser(UserAttributes(password: newPassword));
   }
 
-  // reset password
+  // reset password (AUTH-03)
   Future<void> resetPassword(String email) async {
     await _client.auth.resetPasswordForEmail(email);
   }

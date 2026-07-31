@@ -7,8 +7,6 @@ class AuthBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<AuthRepository>(() => AuthRepository());
 
-    Get.lazyPut<AuthController>(
-      () => AuthController(Get.find<AuthRepository>()),
-    );
+    Get.lazyPut<AuthController>(() => AuthController(AuthRepository()));
   }
 }

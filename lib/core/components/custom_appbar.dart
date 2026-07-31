@@ -1,28 +1,46 @@
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/route.dart';
+import 'package:atur_dompet/modules/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import 'package:atur_dompet/config/utils/route.dart'; // Uncomment jika sudah ada rute
 
 class CustomAppBar {
+  // Greeting
+  static String _getGreeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Morning';
+    } else if (hour < 15) {
+      return 'Good Afternoon';
+    } else if (hour < 18) {
+      return 'Good Evening';
+    } else {
+      return 'Night';
+    }
+  }
+
   // HOME
-  static PreferredSizeWidget home({required String nickname}) {
+  static PreferredSizeWidget home() {
+    final AuthController authC = Get.find<AuthController>();
+
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.white,
-      title: Text(
-        'Hi, $nickname 👋',
-        style: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
-      ),
+      title: Obx(() {
+        final nickname = authC.userProfile.value?.nickname ?? 'User';
+        final greeting = _getGreeting();
+
+        return Text(
+          '$greeting, $nickname 👋',
+          style: Get.textTheme.headlineMedium,
+        );
+      }),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2.0),
         child: Container(color: Colors.black, height: 2.0),
       ),
       actions: [
-        // Tombol Settings (PopupMenuButton)
+        // Settings
         PopupMenuButton<String>(
           icon: const Icon(Icons.settings, color: Colors.black),
           offset: const Offset(0, 45),
@@ -33,8 +51,7 @@ class CustomAppBar {
           onSelected: (value) {
             switch (value) {
               case 'profile':
-                // Get.toNamed(RouteNames.profile);
-                Get.snackbar("Navigasi", "Buka Halaman Profile");
+                Get.toNamed(RouteNames.profile);
                 break;
               case 'reminder':
                 _showSetReminderDialog();
@@ -86,19 +103,16 @@ class CustomAppBar {
   }
 
   // TRANSACTIONS, WALLETS, & DEBTS (Center Title)
-  static PreferredSizeWidget standard({required String title}) {
+  static PreferredSizeWidget standard({
+    required String title,
+    List<Widget>? actions,
+  }) {
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.white,
       centerTitle: true,
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
+      title: Text(title, style: Get.textTheme.headlineMedium),
+      actions: actions,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(2.0),
         child: Container(color: Colors.black, height: 2.0),

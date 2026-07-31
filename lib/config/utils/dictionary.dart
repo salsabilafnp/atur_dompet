@@ -13,6 +13,7 @@ class Dictionary {
   static const String logout = 'Logout';
   static const String nickname = 'Nickname';
   static const String email = 'Email';
+  static const String role = 'User Role';
   static const String password = 'Password';
   static const String newPassword = 'New Password';
   static const String confirmPassword = 'Confirm Password';
@@ -25,17 +26,34 @@ class Dictionary {
   static const String home = 'Home';
   static const String profile = 'Profile';
   static const String transactions = 'Transaction';
-  static const String category = 'Category';
+  static const String category = 'Manage Category';
   static const String wallets = 'Wallet';
   static const String debts = 'Debt & Loan';
   static const String debtLogs = 'Debt Logs';
-  // Transaction
+  static const String accountSecurity = 'Account Security';
+
+  /// Transaction
+  // Options
+  static const String income = 'Income';
+  static const String expense = 'Expense';
+  static const String transfer = 'Transfer';
+  static const String debt = 'Debt';
+  static const String borrow = 'Borrow';
+  static const String loan = 'Loan';
+  static const String lend = 'Lend';
+  static const String repayment = 'Repayment';
+  // Record Trx
   static const String addTransaction = 'Add Transaction';
   static const String editTransaction = 'Edit Transaction';
   static const String transactionDetail = 'Transaction Detail';
   // Category
   static const String addCategory = 'Add Category';
   static const String editCategory = 'Edit Category';
+  static const String deleteCategory = 'Delete Category';
+  static const String categoryName = 'Category Name';
+  static const String categoryType = 'Category Type';
+  static const String categoryIcon = 'Category Icon';
+  static const String categoryColor = 'Category Color';
   // Wallet
   static const String addWallet = 'Add Wallet';
   static const String editWallet = 'Edit Wallet';
