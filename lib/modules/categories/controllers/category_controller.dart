@@ -65,7 +65,7 @@ class CategoryController extends GetxController {
 
       CustomNotification.showSuccess(Dictionary.succAddCategory);
     } catch (e) {
-      CustomNotification.showError(e.toString());
+      CustomNotification.showError(Dictionary.failAddCategory);
     } finally {
       isLoading.value = false;
     }
@@ -92,9 +92,10 @@ class CategoryController extends GetxController {
       await fetchCategories();
       Get.back();
 
+      CustomNotification.showSuccess(Dictionary.succUpdateCategory);
       return true;
     } catch (e) {
-      CustomNotification.showError(e.toString());
+      CustomNotification.showError(Dictionary.failUpdateCategory);
 
       return false;
     } finally {
@@ -109,9 +110,11 @@ class CategoryController extends GetxController {
       await _repository.deleteCategory(category.id);
 
       await fetchCategories();
+
+      CustomNotification.showSuccess(Dictionary.succDelCategory);
       return true;
     } catch (e) {
-      CustomNotification.showError(e.toString());
+      CustomNotification.showError(Dictionary.failDelCategory);
 
       return false;
     } finally {

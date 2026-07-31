@@ -16,10 +16,10 @@ class MainScreen extends StatelessWidget {
 
     // Main Pages
     final List<Widget> pages = [
-      const HomePage(),
-      const TransactionsPage(),
-      const WalletsPage(),
-      const DebtsPage(),
+      HomePage(),
+      TransactionsPage(),
+      WalletsPage(),
+      DebtsPage(),
     ];
 
     return Obx(
@@ -58,7 +58,6 @@ class MainScreen extends StatelessWidget {
                 activeIcon: Icon(Icons.receipt_long),
                 label: Dictionary.transactions,
               ),
-
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_balance_wallet_outlined),
                 activeIcon: Icon(Icons.account_balance_wallet),

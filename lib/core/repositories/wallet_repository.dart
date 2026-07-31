@@ -5,12 +5,13 @@ class WalletRepository {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   // Get Wallets (WAL-01)
-  Future<List<Wallet>> getWallets() async {
+  Future<List<Wallet>> getWallets(String type) async {
     try {
       final response = await _supabase
           .from('wallets')
           .select()
-          .order('created_at', ascending: true);
+          .eq('type', type)
+          .order('name', ascending: true);
 
       return response.map((data) => Wallet.fromJson(data)).toList();
     } catch (e) {
@@ -22,6 +23,7 @@ class WalletRepository {
   Future<void> createWallet({
     required String name,
     required String type,
+    double? balance,
   }) async {
     try {
       final userId = _supabase.auth.currentUser!.id;
@@ -30,7 +32,7 @@ class WalletRepository {
         'user_id': userId,
         'name': name,
         'type': type,
-        'balance': 0.00,
+        'balance': balance ?? 0.0,
       });
     } catch (e) {
       throw Exception('Gagal membuat dompet baru: $e');

@@ -25,10 +25,10 @@ class Dictionary {
   /// Menu
   static const String home = 'Home';
   static const String profile = 'Profile';
-  static const String transactions = 'Transaction';
-  static const String category = 'Manage Category';
-  static const String wallets = 'Wallet';
-  static const String debts = 'Debt & Loan';
+  static const String transactions = 'Transactions';
+  static const String category = 'Manage Categories';
+  static const String wallets = 'Wallets';
+  static const String debts = 'Debts & Loans';
   static const String debtLogs = 'Debt Logs';
   static const String accountSecurity = 'Account Security';
 
@@ -36,6 +36,10 @@ class Dictionary {
   // Options
   static const String income = 'Income';
   static const String expense = 'Expense';
+  static const String incomeCategory = 'Income Categories';
+  static const String expenseCategory = 'Expense Categories';
+  static const String main = 'Main';
+  static const String savings = 'Savings';
   static const String transfer = 'Transfer';
   static const String debt = 'Debt';
   static const String borrow = 'Borrow';
@@ -57,6 +61,10 @@ class Dictionary {
   // Wallet
   static const String addWallet = 'Add Wallet';
   static const String editWallet = 'Edit Wallet';
+  static const String deleteWallet = 'Delete Wallet';
+  static const String walletName = 'Wallet Name';
+  static const String walletType = 'Wallet Type';
+  static const String initialBalance = 'Initial Balance';
   // Debts
   static const String addDebts = 'Add Debts';
   static const String editDebts = 'Edit Debts';
@@ -67,6 +75,10 @@ class Dictionary {
 
   /// Notification
   static const String noCategory = 'No category data.';
+  static const String noWallet = 'No wallet data.';
+  static const String noTransaction = 'No transaction data.';
+  static const String noDebt = 'No debts data.';
+  static const String noLoan = 'No loans data.';
   // Alert
   static const String succLogin = 'Login successfully';
   static const String succRegister = 'Register successfully';
@@ -77,32 +89,46 @@ class Dictionary {
   static const String succAddCategory = 'Add category successfully';
   static const String succAddWallet = 'Add wallet successfully';
   static const String succAddDebts = 'Add debts successfully';
-  static const String successDelTransaction =
-      'Transaction deleted successfully';
-  static const String successDelCategory = 'Category deleted successfully';
-  static const String successDelWallet = 'Wallet deleted successfully';
-  static const String successDelDebts = 'Debts deleted successfully';
+  static const String succAddDebtLog = 'Add debt log successfully';
+  static const String succUpdateTransaction = 'Update transaction successfully';
+  static const String succUpdateCategory = 'Update category successfully';
+  static const String succUpdateWallet = 'Update wallet successfully';
+  static const String succUpdateDebts = 'Update debts successfully';
+  static const String succUpdateDebtLog = 'Update debt log successfully';
+  static const String succDelTransaction = 'Transaction deleted successfully';
+  static const String succDelCategory = 'Category deleted successfully';
+  static const String succDelWallet = 'Wallet deleted successfully';
+  static const String succDelDebts = 'Debts deleted successfully';
   // Error
-  static const String failedLogin = 'Login failed';
-  static const String failedRegister = 'Register failed';
-  static const String failedUpdateProfile = 'Update profile failed';
-  static const String failedResetPassword = 'Update password failed';
-  static const String failedChangePassword = 'Change password failed';
-  static const String failedAddTransaction = 'Add transaction failed';
-  static const String failedAddCategory = 'Add category failed';
-  static const String failedAddWallet = 'Add wallet failed';
-  static const String failedAddDebts = 'Add debts failed';
-  static const String failedDelTransaction = 'Failed to delete transaction';
-  static const String failedDelCategory = 'Failed to delete category';
-  static const String failedDelWallet = 'Failed to delete wallet';
-  static const String failedDelDebts = 'Failed to delete debts';
+  static const String failLogin = 'Login failed';
+  static const String failRegister = 'Register failed';
+  static const String failUpdateProfile = 'Update profile failed';
+  static const String failResetPassword = 'Update password failed';
+  static const String failChangePassword = 'Change password failed';
+  static const String failAddTransaction = 'Add transaction failed';
+  static const String failAddCategory = 'Add category failed';
+  static const String failAddWallet = 'Add wallet failed';
+  static const String failAddDebts = 'Add debts failed';
+  static const String failAddDebtLog = 'Add debt log failed';
+  static const String failUpdateTransaction = 'Update transaction failed';
+  static const String failUpdateCategory = 'Update category failed';
+  static const String failUpdateWallet = 'Update wallet failed';
+  static const String failUpdateDebts = 'Update debts failed';
+  static const String failUpdateDebtLog = 'Update debt log failed';
+  static const String failDelTransaction = 'Failed to delete transaction';
+  static const String failDelCategory = 'Failed to delete category';
+  static const String failDelWallet = 'Failed to delete wallet';
+  static const String failDelDebts = 'Failed to delete debts';
 
   /// Button
   static const String loadingBtn = 'Loading...';
   static const String cancelBtn = 'Cancel';
   static const String confirmBtn = 'Confirm';
   static const String saveBtn = 'Save';
+  static const String createBtn = 'Create';
+  static const String editBtn = 'Edit';
   static const String updateBtn = 'Update';
+  static const String deleteBtn = 'Delete';
   static const String loginBtn = 'Login';
   static const String registerBtn = 'Register';
   static const String logoutBtn = 'Logout';

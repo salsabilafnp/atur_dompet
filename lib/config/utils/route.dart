@@ -6,6 +6,7 @@ import 'package:atur_dompet/modules/auth/views/register_page.dart';
 import 'package:atur_dompet/modules/auth/views/splash_screen.dart';
 import 'package:atur_dompet/modules/categories/controllers/category_controller.dart';
 import 'package:atur_dompet/modules/categories/views/category_page.dart';
+import 'package:atur_dompet/modules/wallets/controllers/wallet_controller.dart';
 import 'package:get/get.dart';
 
 class RouteNames {
@@ -47,7 +48,13 @@ class Routes {
     ),
     GetPage(name: RouteNames.login, page: () => LoginPage()),
     GetPage(name: RouteNames.register, page: () => RegisterPage()),
-    GetPage(name: RouteNames.home, page: () => MainScreen()),
+    GetPage(
+      name: RouteNames.home,
+      page: () => MainScreen(),
+      binding: BindingsBuilder(() {
+        Get.put(WalletController());
+      }),
+    ),
     GetPage(name: RouteNames.profile, page: () => ProfilePage()),
     // GetPage(
     //   name: RouteNames.addTransaction,

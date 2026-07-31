@@ -12,122 +12,143 @@ class CategoryPage extends GetView<CategoryController> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: CustomAppBar.standard(title: Dictionary.category),
-        body: Column(
-          children: [
-            // TAB BAR
-            Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: Colors.black, width: 3),
+    return Scaffold(
+      appBar: CustomAppBar.standard(title: Dictionary.category),
+      body: Obx(() {
+        if (controller.isLoading.value &&
+            controller.incomeCategories.isEmpty &&
+            controller.expenseCategories.isEmpty) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.black),
+          );
+        }
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // CREATE BUTTON
+              SizedBox(
+                width: .infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.add),
+                  iconAlignment: IconAlignment.end,
+                  label: Text(Dictionary.addCategoryBtn),
+                  onPressed: () => _showCategoryDialog(context),
                 ),
               ),
-              child: const TabBar(
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black,
-                indicator: BoxDecoration(color: Colors.black),
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-                tabs: [
-                  Tab(text: Dictionary.income),
-                  Tab(text: Dictionary.expense),
-                ],
+              const SizedBox(height: 40),
+
+              // INCOME CATEGORIES
+              Text(
+                Dictionary.incomeCategory.toUpperCase(),
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-            ),
+              const SizedBox(height: 15),
+              _buildCategoryList(
+                context,
+                categories: controller.incomeCategories,
+                hasShadow: true,
+              ),
+              const SizedBox(height: 40),
 
-            // TAB VIEWS
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value &&
-                    controller.incomeCategories.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Colors.black),
-                  );
-                }
-                return TabBarView(
-                  children: [
-                    _buildCategoryList(
-                      controller.incomeCategories,
-                      Dictionary.income,
-                    ),
-                    _buildCategoryList(
-                      controller.expenseCategories,
-                      Dictionary.expense,
-                    ),
-                  ],
-                );
-              }),
-            ),
-          ],
-        ),
-
-        // FAB
-        floatingActionButton: Container(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            border: Border.all(color: Colors.black, width: 2),
-            boxShadow: const [
-              BoxShadow(color: Colors.grey, offset: Offset(4, 4)),
+              // EXPENSE CATEGORIES
+              Text(
+                Dictionary.expenseCategory.toUpperCase(),
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 15),
+              _buildCategoryList(
+                context,
+                categories: controller.expenseCategories,
+                hasShadow: false,
+              ),
             ],
           ),
-          child: IconButton(
-            icon: const Icon(Icons.add, color: Colors.white, size: 30),
-            onPressed: () => _showCategoryDialog(context),
-          ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
   // BUILD LIST Category
-  Widget _buildCategoryList(List<CategoryTransaction> categories, String type) {
+  Widget _buildCategoryList(
+    BuildContext context, {
+    required List<CategoryTransaction> categories,
+    required bool hasShadow,
+  }) {
     if (categories.isEmpty) {
       return const Center(child: Text(Dictionary.noCategory));
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: categories.length,
-      itemBuilder: (context, index) {
-        final category = categories[index];
-        final iconData = CategoryHelper.getIconData(category.icon);
-        final color = CategoryHelper.hexToColor(category.color);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black, width: 2),
+        boxShadow: hasShadow
+            ? const [BoxShadow(color: Colors.grey, offset: Offset(4, 4))]
+            : null,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        children: categories.map((category) {
+          final iconData = CategoryHelper.getIconData(category.icon);
+          final color = CategoryHelper.hexToColor(category.color);
 
-        return Card(
-          margin: const EdgeInsets.only(bottom: 15),
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(color: Colors.black, width: 2),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 7),
-            child: ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: color.withAlpha(100),
-                  border: Border.all(color: Colors.black, width: 1.5),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: Row(
+              children: [
+                Icon(iconData, color: color),
+                const SizedBox(width: 15),
+                Expanded(child: Text(category.name.toUpperCase())),
+                // POPUP MENU (MORE VERTICAL)
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, color: Colors.black),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                    side: BorderSide(color: Colors.black, width: 2),
+                  ),
+                  onSelected: (String value) {
+                    if (value == 'edit') {
+                      _showCategoryDialog(context, category: category);
+                    } else if (value == 'delete') {
+                      _confirmDelete(category);
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => [
+                    PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.edit, color: Colors.black, size: 20),
+                          const SizedBox(width: 10),
+                          Text(Dictionary.editBtn),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.delete, color: Colors.red, size: 20),
+                          const SizedBox(width: 10),
+                          Text(
+                            Dictionary.deleteBtn,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                child: Icon(iconData, color: color),
-              ),
-              title: Text(
-                category.name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () => _confirmDelete(category),
-              ),
-              onTap: () => _showCategoryDialog(context, category: category),
+              ],
             ),
-          ),
-        );
-      },
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -167,7 +188,7 @@ class CategoryPage extends GetView<CategoryController> {
                   isEdit ? Dictionary.editCategory : Dictionary.addCategory,
                   style: Get.textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 15),
 
                 // Input Name
                 TextField(
@@ -177,7 +198,7 @@ class CategoryPage extends GetView<CategoryController> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 15),
 
                 // Tipe (Income / Expense)
                 SegmentedButton<String>(
@@ -196,7 +217,7 @@ class CategoryPage extends GetView<CategoryController> {
                     selectedType.value = newSelection.first;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 15),
 
                 //  Icon
                 const Text(
@@ -223,7 +244,7 @@ class CategoryPage extends GetView<CategoryController> {
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 15),
 
                 // Color
                 const Text(
@@ -311,21 +332,21 @@ class CategoryPage extends GetView<CategoryController> {
           ),
         ),
       ),
-      isScrollControlled: true, // Agar bottom sheet tidak terpotong keyboard
+      isScrollControlled: true,
     );
   }
 
-  // DIALOG KONFIRMASI HAPUS (RawBlock Design)
+  // DIALOG DELETE
   void _confirmDelete(CategoryTransaction category) {
     Get.defaultDialog(
-      title: 'Hapus Kategori?',
+      title: Dictionary.deleteCategory,
       middleText: '${Dictionary.deleteCategoryDialog} - ${category.name}',
-      textConfirm: Dictionary.deleteCategoryBtn,
+      textConfirm: Dictionary.deleteBtn,
       textCancel: Dictionary.cancelBtn,
       confirmTextColor: Colors.white,
       buttonColor: Colors.red,
       onConfirm: () {
-        Get.back(); // Tutup dialog
+        Get.back();
         controller.removeCategory(category);
       },
     );

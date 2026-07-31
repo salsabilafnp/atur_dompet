@@ -92,7 +92,7 @@ class AuthController extends GetxController {
     } on AuthException catch (e) {
       CustomNotification.showError(e.message);
     } catch (e) {
-      CustomNotification.showError(Dictionary.failedLogin);
+      CustomNotification.showError(Dictionary.failLogin);
     } finally {
       isLoading.value = false;
     }
@@ -142,7 +142,7 @@ class AuthController extends GetxController {
     } on PostgrestException catch (e) {
       log('Error Database (Mungkin RLS/Insert Profiles): ${e.message}');
     } catch (e) {
-      CustomNotification.showError(Dictionary.failedRegister);
+      CustomNotification.showError(Dictionary.failRegister);
     } finally {
       isLoading.value = false;
     }
@@ -163,7 +163,7 @@ class AuthController extends GetxController {
     } on AuthException catch (e) {
       CustomNotification.showError(e.message);
     } catch (e) {
-      CustomNotification.showError(Dictionary.failedUpdateProfile);
+      CustomNotification.showError(Dictionary.failUpdateProfile);
     } finally {
       isLoading.value = false;
     }
@@ -200,7 +200,7 @@ class AuthController extends GetxController {
     } on AuthException catch (e) {
       CustomNotification.showError(e.message);
     } catch (e) {
-      CustomNotification.showError(Dictionary.failedChangePassword);
+      CustomNotification.showError(Dictionary.failChangePassword);
     } finally {
       isLoading.value = false;
     }
@@ -223,7 +223,7 @@ class AuthController extends GetxController {
     } on AuthException catch (e) {
       CustomNotification.showError(e.message);
     } catch (e) {
-      CustomNotification.showError(Dictionary.failedResetPassword);
+      CustomNotification.showError(Dictionary.failResetPassword);
     } finally {
       isLoading.value = false;
     }

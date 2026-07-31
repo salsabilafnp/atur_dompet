@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class CategoryRepository {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  // READ: Mengambil kategori berdasarkan tipenya (income/expense) (CAT-01, CAT-02)
+  // Get Category by type (income/expense) (CAT-01, CAT-02)
   Future<List<CategoryTransaction>> getCategories(String type) async {
     try {
       final response = await _supabase
