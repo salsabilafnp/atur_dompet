@@ -9,11 +9,12 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  flutter_launcher_icons: ^0.14.4
   google_fonts: ^8.2.0
   get: ^4.7.3
+  intl: ^0.20.3
   supabase: ^2.14.0
   supabase_flutter: ^2.16.0
-  intl: ^0.20.3
 
 dev_dependencies:
   flutter_test:
