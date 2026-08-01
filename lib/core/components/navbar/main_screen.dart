@@ -1,5 +1,4 @@
 import 'package:atur_dompet/config/utils/dictionary.dart';
-import 'package:atur_dompet/config/utils/route.dart';
 import 'package:atur_dompet/core/components/navbar/navbar_controller.dart';
 import 'package:atur_dompet/modules/dashboard/views/home_page.dart';
 import 'package:atur_dompet/modules/debts/views/debt_page.dart';
@@ -25,9 +24,11 @@ class MainScreen extends StatelessWidget {
 
     return Obx(
       () => Scaffold(
-        body: IndexedStack(
-          index: controller.selectedIndex.value,
-          children: pages,
+        body: SafeArea(
+          child: IndexedStack(
+            index: controller.selectedIndex.value,
+            children: pages,
+          ),
         ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
@@ -72,20 +73,6 @@ class MainScreen extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: Container(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            border: Border.all(color: Colors.black, width: 2),
-            boxShadow: const [
-              BoxShadow(color: Colors.grey, offset: Offset(4, 4)),
-            ],
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.add, color: Colors.white, size: 30),
-            onPressed: () => Get.toNamed(RouteNames.addTransaction),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }

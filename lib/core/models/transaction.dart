@@ -7,6 +7,7 @@ class Transaction {
   final String type; // 'income', 'expense', 'transfer', 'debt', 'loan'
   final double amount;
   final String? note;
+  final String? title;
   final DateTime transactionDate;
 
   // Fields from JOIN with Category table
@@ -23,6 +24,7 @@ class Transaction {
     required this.type,
     required this.amount,
     this.note,
+    this.title,
     required this.transactionDate,
     this.categoryName,
     this.categoryIcon,
@@ -41,6 +43,7 @@ class Transaction {
       type: json['type'] as String,
       amount: (json['amount'] as num).toDouble(),
       note: json['note'] as String?,
+      title: json['title'] as String?,
       transactionDate: DateTime.parse(json['transaction_date'] as String),
       categoryName: categoryData?['name'] as String?,
       categoryIcon: categoryData?['icon'] as String?,
@@ -56,6 +59,7 @@ class Transaction {
       'type': type,
       'amount': amount,
       'note': note,
+      'title': title,
       'transaction_date': transactionDate.toIso8601String(),
     };
   }

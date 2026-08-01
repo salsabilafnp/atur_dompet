@@ -21,6 +21,7 @@ class Dictionary {
   static const String passwordNotMatch = 'Passwords do not match';
   static const String forgotPassword = 'Forgot Password';
   static const String resetPassword = 'Reset Password';
+  static const String deleteAccount = 'Delete Account';
 
   /// Menu
   static const String home = 'Home';
@@ -31,8 +32,26 @@ class Dictionary {
   static const String debts = 'Debts & Loans';
   static const String debtLogs = 'Debt Logs';
   static const String accountSecurity = 'Account Security';
+  static const String setReminderBtn = 'Set Reminder';
+  static const String aboutBtn = 'About App';
+
+  /// Home
+  static const String summary = 'Summary';
+  static const String totalBalance = 'Total Balance';
+  static const String totalMain = 'Total Main Wallet';
+  static const String totalSavings = 'Total Savings';
+  static const String expenseChart = 'Expenses by Category';
+  static const String savingsChart = 'Savings by Category';
+  static const String summaryPDF = 'Export Summary (PDF)';
+  // Filter
+  static const String today = 'Today';
+  static const String sevenDays = '7 Days';
+  static const String thisMonth = 'This Month';
+  static const String allTime = 'All Time';
+  static const String customDate = 'Custom Date';
 
   /// Transaction
+  static const String selectColor = 'Select Color';
   // Options
   static const String all = 'All';
   static const String income = 'Income';
@@ -58,7 +77,12 @@ class Dictionary {
   static const String sourceWallet = 'Source Wallet';
   static const String destinationWallet = 'Destination Wallet';
   static const String amount = 'Amount';
-  static const String note = 'Note';
+  static const String notes = 'Note';
+  static const String notesHint = 'Add description...';
+  static const String title = 'Title';
+  static const String titleHint = 'Add title...';
+  static const String selectWallet = 'Select Wallet';
+  static const String selectCategory = 'Select Category';
   static const String transactionDate = 'Transaction Date';
   static const String amountLess = 'Amount need to be more than 0';
   static const String walletRequired = 'Choose source wallet first';
@@ -96,6 +120,8 @@ class Dictionary {
   static const String noTransaction = 'No transaction data found.';
   static const String noDebt = 'No debts data found.';
   static const String noLoan = 'No loans data found.';
+  static const String transactionFieldRequired =
+      'Please fill in all fields for the transaction.';
   // Alert
   static const String succLogin = 'Login successfully';
   static const String succRegister = 'Register successfully';
@@ -130,6 +156,7 @@ class Dictionary {
   static const String failAddDebts = 'Add debts failed';
   static const String failAddDebtLog = 'Add debt log failed';
   static const String failUpdateTransaction = 'Update transaction failed';
+  static const String failSelectCategory = 'Please select a category first';
   static const String failUpdateCategory = 'Update category failed';
   static const String failUpdateWallet = 'Update wallet failed';
   static const String failUpdateDebts = 'Update debts failed';
@@ -156,6 +183,7 @@ class Dictionary {
   static const String updatePasswordBtn = 'Update Password';
   static const String changePasswordBtn = 'Change Password';
   static const String resetPasswordBtn = 'Reset Password';
+  static const String deleteAccountBtn = 'Delete Account';
   static const String noAccount = 'Don\'t have an account? Register';
   static const String haveAccount = 'Already have an account? Login';
   static const String sendResetLinkBtn = 'Send Reset Link';
@@ -188,6 +216,8 @@ class Dictionary {
       'Are you sure you want to change your password?';
   static const String resetPasswordDialog =
       'Are you sure you want to reset your password?';
+  static const String deleteAccountDialog =
+      'Are you sure you want to delete your account?';
 
   // label
   static const String success = 'Success';

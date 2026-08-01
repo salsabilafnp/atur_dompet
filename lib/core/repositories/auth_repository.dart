@@ -84,6 +84,19 @@ class AuthRepository {
     await _client.auth.resetPasswordForEmail(email);
   }
 
+  // delete account
+  Future<void> deleteAccount() async {
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      return;
+    }
+
+    // Delete user from auth
+    await _client.rpc('handle_delete_account', params: {'user_id': user.id});
+
+    await logout();
+  }
+
   // auth state changes stream
   Stream<AuthState> get authStateChanges => _client.auth.onAuthStateChange;
 }

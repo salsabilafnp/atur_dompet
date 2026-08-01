@@ -7,9 +7,12 @@ class WalletRepository {
   // Get Wallets (WAL-01)
   Future<List<Wallet>> getWallets(String type) async {
     try {
+      final userId = _supabase.auth.currentUser!.id;
+
       final response = await _supabase
           .from('wallets')
           .select()
+          .eq('user_id', userId)
           .eq('type', type)
           .order('name', ascending: true);
 
@@ -24,6 +27,7 @@ class WalletRepository {
     required String name,
     required String type,
     double? balance,
+    String? color,
   }) async {
     try {
       final userId = _supabase.auth.currentUser!.id;
@@ -33,6 +37,7 @@ class WalletRepository {
         'name': name,
         'type': type,
         'balance': balance ?? 0.0,
+        'color': color ?? '',
       });
     } catch (e) {
       throw Exception('Gagal membuat dompet baru: $e');
@@ -44,6 +49,8 @@ class WalletRepository {
     String walletId, {
     required String name,
     required String type,
+    double? balance,
+    String? color,
   }) async {
     try {
       await _supabase
@@ -51,6 +58,8 @@ class WalletRepository {
           .update({
             'name': name,
             'type': type,
+            'balance': balance ?? 0.0,
+            'color': color ?? '',
             'updated_at': DateTime.now().toIso8601String(),
           })
           .eq('id', walletId);

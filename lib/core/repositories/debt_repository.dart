@@ -8,9 +8,12 @@ class DebtRepository {
   // Get all debts (DEBT-01)
   Future<List<Debt>> getDebts(String type) async {
     try {
+      final userId = _supabase.auth.currentUser!.id;
+
       final response = await _supabase
           .from('debts')
           .select()
+          .eq('user_id', userId)
           .eq('type', type) // 'borrow' atau 'lend'
           .order('status', ascending: false) // 'unpaid' di atas 'paid'
           .order('due_date', ascending: true); // Shortest due date at top
@@ -26,7 +29,7 @@ class DebtRepository {
     try {
       final response = await _supabase
           .from('debt_logs')
-          .select()
+          .select('*, transactions(*, wallets!transactions_wallet_id_fkey(*))')
           .eq('debt_id', debtId)
           .order('payment_date', ascending: false);
 

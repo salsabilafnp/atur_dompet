@@ -7,9 +7,17 @@ class TransactionRepository {
   // Get All Transactions (TRX-04)
   Future<List<Transaction>> getTransactions() async {
     try {
+      final userId = _supabase.auth.currentUser!.id;
+
       final response = await _supabase
           .from('transactions')
-          .select('*, categories(name, icon, color), wallets(*)')
+          .select('''
+*,
+categories(id, name, icon, color),
+wallet:wallets!transactions_wallet_id_fkey (*),
+destination_wallet:wallets!transactions_destination_wallet_id_fkey (*)
+            ''')
+          .eq('user_id', userId)
           .order('transaction_date', ascending: false);
 
       return response.map((data) => Transaction.fromJson(data)).toList();
@@ -26,6 +34,7 @@ class TransactionRepository {
     required String type,
     required double amount,
     String? note,
+    String? title,
     required DateTime date,
   }) async {
     try {
@@ -39,6 +48,7 @@ class TransactionRepository {
         'type': type,
         'amount': amount,
         'note': note,
+        'title': title,
         'transaction_date': date.toIso8601String(),
       });
     } catch (e) {
@@ -55,6 +65,7 @@ class TransactionRepository {
     required String type,
     required double amount,
     String? note,
+    String? title,
     required DateTime date,
   }) async {
     try {
@@ -67,6 +78,7 @@ class TransactionRepository {
             'type': type,
             'amount': amount,
             'note': note,
+            'title': title,
             'transaction_date': date.toIso8601String(),
             'updated_at': DateTime.now().toIso8601String(),
           })

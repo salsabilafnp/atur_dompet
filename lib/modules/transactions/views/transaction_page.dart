@@ -1,4 +1,7 @@
+import 'package:atur_dompet/config/theme/app_theme.dart';
+import 'package:atur_dompet/config/utils/category_helper.dart';
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/format_helper.dart';
 import 'package:atur_dompet/config/utils/route.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
 import 'package:atur_dompet/core/models/transaction.dart';
@@ -8,13 +11,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class TransactionsPage extends GetView<TransactionController> {
-  final currencyFormatter = NumberFormat.currency(
-    locale: 'id_ID',
-    symbol: 'Rp ',
-    decimalDigits: 0,
-  );
-
-  TransactionsPage({super.key});
+  const TransactionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +89,7 @@ class TransactionsPage extends GetView<TransactionController> {
 
               return ListView.builder(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+                  horizontal: 15,
                   vertical: 10,
                 ),
                 itemCount: groups.keys.length,
@@ -143,6 +140,20 @@ class TransactionsPage extends GetView<TransactionController> {
           ),
         ],
       ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          color: Colors.black,
+          border: Border.all(color: Colors.black, width: 2),
+          boxShadow: const [
+            BoxShadow(color: Colors.grey, offset: Offset(4, 4)),
+          ],
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.add, color: Colors.white, size: 30),
+          tooltip: Dictionary.addTransaction,
+          onPressed: () => Get.toNamed(RouteNames.addTransaction),
+        ),
+      ),
     );
   }
 
@@ -171,82 +182,74 @@ class TransactionsPage extends GetView<TransactionController> {
   // Transaction Item
   Widget _buildTransactionItem(Transaction trx) {
     final isExpense = trx.type == 'expense' || trx.type == 'transfer';
-    final amountColor = isExpense ? Colors.red.shade700 : Colors.green.shade700;
+    final amountColor = isExpense ? AppTheme.error : AppTheme.success;
     final amountPrefix = isExpense ? '- ' : '+ ';
 
     // Fallback if note is empty
-    final title = (trx.note != null && trx.note!.isNotEmpty)
-        ? trx.note!.toUpperCase()
+    final title = (trx.title != null && trx.title!.isNotEmpty)
+        ? trx.title!.toUpperCase()
         : trx.type.toUpperCase();
 
-    final subtitle = trx.type == Dictionary.transfer
-        ? 'Transfer Fund'
-        : Dictionary.addTransaction;
-
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.black, width: 2)),
-      ),
-      child: Row(
-        children: [
-          // Icon Box
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.black, width: 2),
+    return InkWell(
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.black, width: 2)),
+        ),
+        child: Row(
+          children: [
+            // Icon Box
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.black, width: 2),
+              ),
+              child: Icon(
+                CategoryHelper.getIconData(trx.categoryIcon),
+                color: CategoryHelper.hexToColor(trx.categoryColor),
+                size: 25,
+              ),
             ),
-            child: Icon(
-              isExpense ? Icons.shopping_cart_outlined : Icons.work_outline,
-              color: Colors.black,
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 15),
+            const SizedBox(width: 15),
 
-          // Texts (Title & Subtitle)
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 15,
+            // Texts (Title & Subtitle)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(Get.context!).textTheme.headlineSmall,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontFamily: 'monospace',
-                    color: Colors.grey.shade700,
-                    fontSize: 13,
+                  const SizedBox(height: 4),
+                  Text(
+                    "${trx.type.toUpperCase()} ${trx.type == 'transfer' ? "" : "- ${trx.categoryName!.toUpperCase()}"}",
+                    style: Theme.of(Get.context!).textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          // Amount
-          Text(
-            '$amountPrefix${currencyFormatter.format(trx.amount)}',
-            style: TextStyle(
-              color: amountColor,
-              fontWeight: FontWeight.w900,
-              fontFamily: 'monospace',
-              fontSize: 15,
+            // Amount
+            Text(
+              '$amountPrefix${FormatHelper.currencyFormatter.format(trx.amount)}',
+              style: TextStyle(
+                color: amountColor,
+                fontWeight: FontWeight.w900,
+                fontFamily: 'monospace',
+                fontSize: 15,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      onTap: () => Get.toNamed(RouteNames.editTransaction, arguments: trx),
     );
   }
 }

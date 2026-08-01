@@ -10,10 +10,8 @@ class CustomAppBar {
     var hour = DateTime.now().hour;
     if (hour < 12) {
       return 'Morning';
-    } else if (hour < 15) {
-      return 'Good Afternoon';
-    } else if (hour < 18) {
-      return 'Good Evening';
+    } else if (hour >= 12 && hour < 18) {
+      return 'Hi';
     } else {
       return 'Night';
     }

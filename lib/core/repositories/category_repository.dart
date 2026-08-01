@@ -7,9 +7,12 @@ class CategoryRepository {
   // Get Category by type (income/expense) (CAT-01, CAT-02)
   Future<List<CategoryTransaction>> getCategories(String type) async {
     try {
+      final userId = _supabase.auth.currentUser!.id;
+
       final response = await _supabase
           .from('categories')
           .select()
+          .eq('user_id', userId)
           .eq('type', type)
           .order('name', ascending: true);
 

@@ -57,13 +57,13 @@ class LoginPage extends GetView<AuthController> {
               child: const Text(Dictionary.forgotPasswordBtn),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
 
           // Login Button
           SizedBox(
             width: .infinity,
             child: Obx(
-              () => FilledButton(
+              () => ElevatedButton(
                 onPressed: controller.isLoading.value ? null : controller.login,
                 child: controller.isLoading.value
                     ? Text(Dictionary.loadingBtn)

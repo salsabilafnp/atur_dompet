@@ -1,23 +1,75 @@
 import 'package:atur_dompet/config/utils/dictionary.dart';
 import 'package:atur_dompet/core/components/custom_notification.dart';
+import 'package:atur_dompet/core/models/category_transaction.dart';
 import 'package:atur_dompet/core/models/transaction.dart';
+import 'package:atur_dompet/core/models/wallet.dart';
 import 'package:atur_dompet/core/repositories/transaction_repository.dart';
+import 'package:atur_dompet/modules/categories/controllers/category_controller.dart';
+import 'package:atur_dompet/modules/wallets/controllers/wallet_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class TransactionController extends GetxController {
   final TransactionRepository _repository = TransactionRepository();
 
+  final WalletController _walletC = Get.find<WalletController>();
+  final CategoryController _categoryC = Get.find<CategoryController>();
+
   var allTransactions = <Transaction>[].obs;
   var isLoading = false.obs;
   // Filter State
   var searchQuery = ''.obs;
-  var selectedFilter = 'ALL'.obs; // 'ALL', 'INCOME', 'EXPENSE'
+  var selectedFilter = 'ALL'.obs; // 'ALL', 'INCOME', 'EXPENSE', 'TRANSFER'
+  var selectedDateFilter = 'THIS_MONTH'.obs;
+  var customStartDate = DateTime.now().obs;
+  var customEndDate = DateTime.now().obs;
+
+  // FORM
+  var isEditMode = false.obs;
+  var editingTransactionId = ''.obs;
+
+  var formType = 'expense'.obs; // 'INCOME', 'EXPENSE', 'TRANSFER'
+  var amountController = TextEditingController();
+  var noteController = TextEditingController();
+  var titleController = TextEditingController();
+
+  var selectedWalletId = ''.obs;
+  var selectedDestinationWalletId = ''.obs;
+  var selectedCategoryId = ''.obs;
+  var selectedDate = DateTime.now().obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchTransactions();
+  }
+
+  @override
+  void onClose() {
+    amountController.dispose();
+    noteController.dispose();
+    super.onClose();
+  }
+
+  // Getter
+  List<Wallet> get availableWallets {
+    if (formType.value == 'expense') {
+      return _walletC.mainWallets; // Only main wallet
+    } else {
+      // Income & Transfer from all wallet
+      return [..._walletC.mainWallets, ..._walletC.savingsWallets];
+    }
+  }
+
+  List<CategoryTransaction> get availableCategories {
+    if (formType.value == 'transfer') return [];
+
+    if (formType.value == 'expense') {
+      return _categoryC.expenseCategories;
+    } else {
+      return _categoryC.incomeCategories;
+    }
   }
 
   // Get Transactions (TRX-04)
@@ -35,13 +87,16 @@ class TransactionController extends GetxController {
   }
 
   // Setter Search Query
-  void setSearchQuery(String query) {
-    searchQuery.value = query;
-  }
-
+  void setSearchQuery(String query) => searchQuery.value = query;
   // Setter Selected Filter
-  void setSelectedFilter(String filter) {
-    selectedFilter.value = filter;
+  void setSelectedFilter(String filter) => selectedFilter.value = filter;
+  // Setter Selected Date Filter
+  void setDateFilter(String filter) => selectedDateFilter.value = filter;
+
+  void setCustomDateRange(DateTime start, DateTime end) {
+    customStartDate.value = start;
+    customEndDate.value = end;
+    selectedDateFilter.value = 'CUSTOM';
   }
 
   // Getter Filtered Transactions
@@ -49,9 +104,9 @@ class TransactionController extends GetxController {
     return allTransactions.where((trx) {
       // 1. Filter by Type
       bool matchType = true;
-      if (selectedFilter.value == 'INCOME') {
+      if (selectedFilter.value == Dictionary.income) {
         matchType = trx.type == 'income';
-      } else if (selectedFilter.value == 'EXPENSE') {
+      } else if (selectedFilter.value == Dictionary.expense) {
         matchType = trx.type == 'expense';
       }
 
@@ -64,7 +119,52 @@ class TransactionController extends GetxController {
         matchSearch = note.contains(query);
       }
 
-      return matchType && matchSearch;
+      // 3. Filter by Date
+      bool matchDate = true;
+      final date = trx.transactionDate;
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+
+      switch (selectedDateFilter.value) {
+        case 'TODAY':
+          final trxDay = DateTime(date.year, date.month, date.day);
+          matchDate = trxDay.isAtSameMomentAs(today);
+          break;
+        case '7_DAYS':
+          final sevenDaysAgo = today.subtract(const Duration(days: 7));
+          matchDate =
+              date.isAfter(sevenDaysAgo) || date.isAtSameMomentAs(sevenDaysAgo);
+          break;
+        case 'THIS_MONTH':
+          matchDate = date.year == now.year && date.month == now.month;
+          break;
+        case 'CUSTOM':
+          // 00:00:00 - 23:59:59
+          final start = DateTime(
+            customStartDate.value.year,
+            customStartDate.value.month,
+            customStartDate.value.day,
+          );
+          final end = DateTime(
+            customEndDate.value.year,
+            customEndDate.value.month,
+            customEndDate.value.day,
+            23,
+            59,
+            59,
+          );
+
+          matchDate =
+              (date.isAfter(start) || date.isAtSameMomentAs(start)) &&
+              (date.isBefore(end) || date.isAtSameMomentAs(end));
+          break;
+        case 'ALL_TIME':
+        default:
+          matchDate = true;
+          break;
+      }
+
+      return matchType && matchSearch && matchDate;
     }).toList();
   }
 
@@ -97,66 +197,88 @@ class TransactionController extends GetxController {
     return groups;
   }
 
-  // Record Expense (TRX-02)
-  Future<bool> addExpense({
-    required String walletId,
-    required String categoryId,
-    required double amount,
-    String? note,
-    required DateTime date,
-  }) async {
-    return _executeTransaction(
-      walletId: walletId,
-      categoryId: categoryId,
-      type: 'expense',
-      amount: amount,
-      note: note,
-      date: date,
-    );
+  // INIT FORM
+  void initForm({Transaction? trx}) {
+    if (trx != null) {
+      isEditMode.value = true;
+      editingTransactionId.value = trx.id;
+      formType.value = trx.type;
+      amountController.text = trx.amount.toInt().toString();
+      noteController.text = trx.note ?? '';
+      titleController.text = trx.title ?? '';
+      selectedWalletId.value = trx.walletId;
+      selectedDestinationWalletId.value = trx.destinationWalletId ?? '';
+      selectedCategoryId.value = trx.categoryId ?? '';
+      selectedDate.value = trx.transactionDate;
+    } else {
+      isEditMode.value = false;
+      editingTransactionId.value = '';
+      formType.value = 'expense';
+      amountController.clear();
+      noteController.clear();
+      titleController.clear();
+      selectedWalletId.value = '';
+      selectedDestinationWalletId.value = '';
+      selectedCategoryId.value = '';
+      selectedDate.value = DateTime.now();
+    }
   }
 
-  // Record Income (TRX-01)
-  Future<bool> addIncome({
-    required String walletId,
-    required String categoryId,
-    required double amount,
-    String? note,
-    required DateTime date,
-  }) async {
-    return _executeTransaction(
-      walletId: walletId,
-      categoryId: categoryId,
-      type: 'income',
-      amount: amount,
-      note: note,
-      date: date,
-    );
-  }
-
-  // Transfer Balance (TRX-03)
-  Future<bool> addTransfer({
-    required String sourceWalletId,
-    required String destinationWalletId,
-    required double amount,
-    String? note,
-    required DateTime date,
-  }) async {
-    if (sourceWalletId == destinationWalletId) {
-      CustomNotification.showError(Dictionary.failSameSourceFund);
-      return false;
+  // Submit Transaction (TRX-01, TRX-02, TRX-03)
+  Future<void> submitTransaction() async {
+    final amount =
+        double.tryParse(amountController.text.replaceAll('.', '')) ?? 0;
+    if (amount <= 0 || selectedWalletId.isEmpty) {
+      CustomNotification.showError(Dictionary.failAddTransaction);
+      return;
     }
 
-    return _executeTransaction(
-      walletId: sourceWalletId,
-      destinationWalletId: destinationWalletId,
-      type: 'transfer',
-      amount: amount,
-      note: note,
-      date: date,
-    );
+    if (formType.value == 'transfer' &&
+        selectedWalletId.value == selectedDestinationWalletId.value) {
+      CustomNotification.showError(Dictionary.failSameSourceFund);
+      return;
+    }
+
+    if (formType.value != 'transfer' && selectedCategoryId.isEmpty) {
+      CustomNotification.showError(Dictionary.failSelectCategory);
+      return;
+    }
+
+    if (isEditMode.value) {
+      await updateTransaction(
+        transactionId: editingTransactionId.value,
+        walletId: selectedWalletId.value,
+        destinationWalletId: formType.value == 'transfer'
+            ? selectedDestinationWalletId.value
+            : null,
+        categoryId: formType.value != 'transfer'
+            ? selectedCategoryId.value
+            : null,
+        type: formType.value,
+        amount: amount,
+        note: noteController.text,
+        title: titleController.text,
+        date: selectedDate.value,
+      );
+    } else {
+      await _executeTransaction(
+        walletId: selectedWalletId.value,
+        destinationWalletId: formType.value == 'transfer'
+            ? selectedDestinationWalletId.value
+            : null,
+        categoryId: formType.value != 'transfer'
+            ? selectedCategoryId.value
+            : null,
+        type: formType.value,
+        amount: amount,
+        note: noteController.text,
+        title: titleController.text,
+        date: selectedDate.value,
+      );
+    }
   }
 
-  // Helper: insert transaction data
+  // Execute Transaction (TRX-01, TRX-02, TRX-03)
   Future<bool> _executeTransaction({
     required String walletId,
     String? destinationWalletId,
@@ -164,31 +286,33 @@ class TransactionController extends GetxController {
     required String type,
     required double amount,
     String? note,
+    String? title,
     required DateTime date,
   }) async {
     isLoading.value = true;
-
     try {
       await _repository.recordTransaction(
         walletId: walletId,
-        destinationWalletId: destinationWalletId,
-        categoryId: categoryId,
+        destinationWalletId: destinationWalletId ?? '',
+        categoryId: categoryId ?? '',
         type: type,
         amount: amount,
-        note: note,
+        note: note ?? '',
+        title: title ?? '',
         date: date,
       );
 
+      _walletC.fetchWallets();
       await fetchTransactions();
-
       Get.back();
+
       CustomNotification.showSuccess(Dictionary.succAddTransaction);
       return true;
     } catch (e) {
       CustomNotification.showError(Dictionary.failAddTransaction);
-      isLoading.value = false;
-
       return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -201,6 +325,7 @@ class TransactionController extends GetxController {
     required String type,
     required double amount,
     String? note,
+    String? title,
     required DateTime date,
   }) async {
     isLoading.value = true;
@@ -209,16 +334,19 @@ class TransactionController extends GetxController {
       await _repository.updateTransaction(
         transactionId,
         walletId: walletId,
-        destinationWalletId: destinationWalletId,
-        categoryId: categoryId,
+        destinationWalletId: destinationWalletId ?? '',
+        categoryId: categoryId ?? '',
         type: type,
         amount: amount,
-        note: note,
+        note: note ?? '',
+        title: title ?? '',
         date: date,
       );
 
+      _walletC.fetchWallets();
       await fetchTransactions();
       Get.back();
+
       CustomNotification.showSuccess(Dictionary.succUpdateTransaction);
       return true;
     } catch (e) {
@@ -236,14 +364,17 @@ class TransactionController extends GetxController {
     try {
       await _repository.deleteTransaction(transactionId);
 
+      _walletC.fetchWallets();
       await fetchTransactions();
+      Get.back();
+
       CustomNotification.showSuccess(Dictionary.succDelTransaction);
       return true;
     } catch (e) {
       CustomNotification.showError(Dictionary.failDelTransaction);
-      isLoading.value = false;
-
       return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 }

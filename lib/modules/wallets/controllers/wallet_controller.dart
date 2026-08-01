@@ -41,11 +41,17 @@ class WalletController extends GetxController {
     required String name,
     required String type,
     required double balance,
+    String? color,
   }) async {
     isLoading.value = true;
 
     try {
-      await _repository.createWallet(name: name, type: type, balance: balance);
+      await _repository.createWallet(
+        name: name,
+        type: type,
+        balance: balance,
+        color: color,
+      );
 
       await fetchWallets();
       Get.back();
@@ -63,11 +69,19 @@ class WalletController extends GetxController {
     String walletId, {
     required String newName,
     required String newType,
+    double? newBalance,
+    String? newColor,
   }) async {
     isLoading.value = true;
 
     try {
-      await _repository.updateWallet(walletId, name: newName, type: newType);
+      await _repository.updateWallet(
+        walletId,
+        name: newName,
+        type: newType,
+        balance: newBalance,
+        color: newColor,
+      );
       await fetchWallets();
 
       Get.back();

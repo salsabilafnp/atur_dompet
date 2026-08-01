@@ -4,6 +4,7 @@ class Wallet {
   final String name;
   final String type;
   final double balance;
+  final String? color;
 
   Wallet({
     required this.id,
@@ -11,6 +12,7 @@ class Wallet {
     required this.name,
     required this.type,
     required this.balance,
+    this.color,
   });
 
   factory Wallet.fromJson(Map<String, dynamic> json) {
@@ -20,10 +22,11 @@ class Wallet {
       name: json['name'] as String,
       type: json['type'] as String,
       balance: (json['balance'] as num).toDouble(),
+      color: json['color'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'name': name, 'type': type, 'balance': balance};
+    return {'name': name, 'type': type, 'balance': balance, 'color': color};
   }
 }

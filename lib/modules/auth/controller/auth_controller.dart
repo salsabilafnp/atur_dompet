@@ -173,7 +173,9 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     Get.defaultDialog(
       title: Dictionary.logout,
-      textConfirm: Dictionary.confirmBtn,
+      middleText: Dictionary.logoutDialog,
+      textConfirm: Dictionary.logoutBtn,
+      buttonColor: Colors.red,
       textCancel: Dictionary.cancelBtn,
       confirmTextColor: Colors.white,
       onConfirm: () async {
@@ -227,6 +229,37 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // Delete Account
+  Future<void> deleteAccount() async {
+    Get.defaultDialog(
+      title: Dictionary.deleteAccount,
+      middleText: Dictionary.deleteAccountDialog,
+      textConfirm: Dictionary.confirmBtn,
+      buttonColor: Colors.red,
+      textCancel: Dictionary.cancelBtn,
+      confirmTextColor: Colors.white,
+      onConfirm: () async {
+        try {
+          Get.back();
+          isLoading.value = true;
+
+          await _authRepo.deleteAccount();
+          clearControllers();
+
+          CustomNotification.showSuccess('Akun berhasil dihapus');
+          Get.offAllNamed(RouteNames.login);
+        } on AuthException catch (e) {
+          CustomNotification.showError(e.message);
+        } catch (e) {
+          CustomNotification.showError('Gagal menghapus akun.');
+          log('Error Delete Account: $e');
+        } finally {
+          isLoading.value = false;
+        }
+      },
+    );
   }
 
   /// helper

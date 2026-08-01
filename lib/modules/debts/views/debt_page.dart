@@ -8,7 +8,7 @@ class DebtsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar.standard(title: "Debts & Loans"),
-      body: const Center(child: Text("Daftar Hutang dan Piutang")),
+      body: const Center(child: Text("Coming Soon!")),
     );
   }
 }

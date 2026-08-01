@@ -87,7 +87,7 @@ class RegisterPage extends GetView<AuthController> {
           SizedBox(
             width: .infinity,
             child: Obx(
-              () => FilledButton(
+              () => ElevatedButton(
                 onPressed: controller.isLoading.value
                     ? null
                     : controller.register,

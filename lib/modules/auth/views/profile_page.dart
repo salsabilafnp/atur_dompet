@@ -32,7 +32,8 @@ class ProfilePage extends StatelessWidget {
                 // Default fallback string jika data null
                 final nickname =
                     profile?.nickname.toUpperCase() ?? 'UNKNOWN USER';
-                final email = user?.email?.toUpperCase() ?? 'NO_EMAIL_ATTACHED';
+                final email =
+                    user?.email?.toUpperCase() ?? 'NO EMAIL AVAILABLE';
                 final role = profile?.role.toUpperCase() ?? 'USER';
 
                 return Card(
@@ -41,30 +42,44 @@ class ProfilePage extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          child: Icon(Icons.person, size: 40),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 2),
+                            color: Colors.grey[300],
+                          ),
+                          child: Icon(Icons.person, size: 30),
                         ),
                         const SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  nickname,
-                                  style: Get.textTheme.displaySmall,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  "[ $role ]",
-                                  style: Get.textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Text(email),
-                          ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      nickname,
+                                      style: Get.textTheme.displaySmall,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Flexible(
+                                    child: Text(
+                                      "[ $role ]",
+                                      style: Get.textTheme.bodySmall,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              Text(email),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -83,29 +98,55 @@ class ProfilePage extends StatelessWidget {
                           Icon(Icons.lock, size: 25),
                           const SizedBox(width: 10),
                           Text(
-                            Dictionary.accountSecurity,
-                            style: Get.textTheme.headlineSmall,
+                            Dictionary.accountSecurity.toUpperCase(),
+                            style: Get.textTheme.headlineMedium,
                           ),
                         ],
                       ),
-                      Divider(thickness: 2),
+                      Divider(thickness: 3),
                       // Update Profile
-                      OutlinedButton.icon(
-                        label: Text(Dictionary.updateProfileBtn),
+                      TextButton.icon(
+                        label: Text(
+                          Dictionary.updateProfileBtn.toUpperCase(),
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
                         icon: Icon(Icons.edit),
                         iconAlignment: IconAlignment.end,
                         onPressed: () {
                           // TODO: Update Profile
                         },
                       ),
-                      SizedBox(height: 10),
+                      Divider(thickness: 1, height: 5),
+
                       // Update Password
-                      OutlinedButton.icon(
-                        label: Text(Dictionary.updatePasswordBtn),
+                      TextButton.icon(
+                        label: Text(
+                          Dictionary.updatePasswordBtn.toUpperCase(),
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
                         icon: Icon(Icons.lock_reset_outlined),
                         iconAlignment: IconAlignment.end,
                         onPressed: () {
                           // TODO: Update Password
+                        },
+                      ),
+                      Divider(thickness: 1, height: 5),
+
+                      // Delete Account
+                      TextButton.icon(
+                        label: Text(
+                          Dictionary.deleteAccountBtn.toUpperCase(),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.labelLarge!.copyWith(color: Colors.red),
+                        ),
+                        icon: Icon(Icons.person_remove),
+                        iconAlignment: IconAlignment.end,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                        ),
+                        onPressed: () {
+                          authC.deleteAccount();
                         },
                       ),
                     ],
@@ -113,15 +154,23 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 10),
-              OutlinedButton.icon(
-                label: Text(Dictionary.logoutBtn),
-                icon: Icon(Icons.logout),
-                iconAlignment: IconAlignment.end,
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+              SizedBox(height: 20),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                child: SizedBox(
+                  width: .infinity,
+                  child: ElevatedButton.icon(
+                    label: Text(Dictionary.logoutBtn),
+                    icon: Icon(Icons.logout),
+                    iconAlignment: IconAlignment.end,
+                    onPressed: () {
+                      authC.logout();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ],

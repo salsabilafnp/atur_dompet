@@ -226,8 +226,8 @@ class CategoryPage extends GetView<CategoryController> {
                 ),
                 const SizedBox(height: 8),
                 Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
+                  spacing: 10,
+                  runSpacing: 10,
                   children: CategoryHelper.availableIcons.keys.map((iconKey) {
                     final isSelected = selectedIcon.value == iconKey;
                     return InkWell(
@@ -248,12 +248,13 @@ class CategoryPage extends GetView<CategoryController> {
 
                 // Color
                 const Text(
-                  'Select Color',
+                  Dictionary.selectColor,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
-                  spacing: 12,
+                  spacing: 10,
+                  runSpacing: 10,
                   children: CategoryHelper.availableColors.map((color) {
                     final isSelected = selectedColor.value == color;
                     return InkWell(

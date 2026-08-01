@@ -1,20 +1,15 @@
+import 'package:atur_dompet/config/utils/category_helper.dart';
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/format_helper.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
 import 'package:atur_dompet/core/components/custom_notification.dart';
 import 'package:atur_dompet/core/models/wallet.dart';
 import 'package:atur_dompet/modules/wallets/controllers/wallet_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class WalletsPage extends GetView<WalletController> {
-  final currencyFormatter = NumberFormat.currency(
-    locale: 'id_ID',
-    symbol: 'Rp ',
-    decimalDigits: 0,
-  );
-
-  WalletsPage({super.key});
+  const WalletsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +45,15 @@ class WalletsPage extends GetView<WalletController> {
               const SizedBox(height: 40),
 
               // EXPENSES
-              Text(
-                Dictionary.main.toUpperCase(),
-                style: Theme.of(context).textTheme.headlineMedium,
+              Row(
+                children: [
+                  const Icon(Icons.credit_card_outlined, color: Colors.red),
+                  const SizedBox(width: 15),
+                  Text(
+                    Dictionary.main.toUpperCase(),
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
               ),
               const SizedBox(height: 15),
               _buildWalletList(
@@ -63,9 +64,15 @@ class WalletsPage extends GetView<WalletController> {
               const SizedBox(height: 40),
 
               // SAVINGS
-              Text(
-                Dictionary.savings.toUpperCase(),
-                style: Theme.of(context).textTheme.headlineMedium,
+              Row(
+                children: [
+                  const Icon(Icons.savings_outlined, color: Colors.green),
+                  const SizedBox(width: 15),
+                  Text(
+                    Dictionary.savings.toUpperCase(),
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
               ),
               const SizedBox(height: 15),
               _buildWalletList(
@@ -101,22 +108,27 @@ class WalletsPage extends GetView<WalletController> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: wallet.map((wallet) {
+          final color = CategoryHelper.hexToColor(wallet.color);
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Row(
               children: [
-                const Icon(Icons.account_balance_wallet_outlined),
-                const SizedBox(width: 15),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         wallet.name.toUpperCase(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: wallet.color != null ? color : Colors.black,
+                        ),
                       ),
                       const SizedBox(height: 5),
-                      Text(currencyFormatter.format(wallet.balance)),
+                      Text(
+                        FormatHelper.currencyFormatter.format(wallet.balance),
+                      ),
                     ],
                   ),
                 ),
@@ -183,6 +195,11 @@ class WalletsPage extends GetView<WalletController> {
       text: isEdit ? wallet.balance.toStringAsFixed(0) : '',
     );
     var selectedType = (isEdit ? wallet.type : 'main').obs;
+    var selectedColor =
+        (isEdit
+                ? CategoryHelper.hexToColor(wallet.color)
+                : CategoryHelper.availableColors.first)
+            .obs;
 
     Get.bottomSheet(
       Container(
@@ -242,6 +259,38 @@ class WalletsPage extends GetView<WalletController> {
                 ),
                 const SizedBox(height: 15),
 
+                // Color
+                const Text(
+                  Dictionary.selectColor,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: CategoryHelper.availableColors.map((color) {
+                    final isSelected = selectedColor.value == color;
+                    return InkWell(
+                      onTap: () => selectedColor.value = color,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.black
+                                : Colors.transparent,
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 15),
+
                 // Save Button
                 SizedBox(
                   width: double.infinity,
@@ -269,12 +318,19 @@ class WalletsPage extends GetView<WalletController> {
                                   0.0;
                             }
 
+                            // Convert to hext
+                            final hexColor = CategoryHelper.colorToHex(
+                              selectedColor.value,
+                            );
+
                             if (isEdit) {
                               // EDIT
                               controller.updateWallet(
                                 wallet.id,
                                 newName: nameController.text.trim(),
                                 newType: selectedType.value,
+                                newBalance: parsedBalance,
+                                newColor: hexColor,
                               );
                             } else {
                               // CREATE
@@ -282,6 +338,7 @@ class WalletsPage extends GetView<WalletController> {
                                 name: nameController.text.trim(),
                                 type: selectedType.value,
                                 balance: parsedBalance,
+                                color: hexColor,
                               );
                             }
                           },

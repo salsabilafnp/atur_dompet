@@ -14,7 +14,7 @@ class AuthTemplate extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: .all(25),
+            padding: .all(20),
             child: Column(
               children: [
                 CircleAvatar(
