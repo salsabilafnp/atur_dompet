@@ -1,4 +1,5 @@
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/route.dart';
 import 'package:atur_dompet/core/components/navbar/navbar_controller.dart';
 import 'package:atur_dompet/modules/dashboard/views/home_page.dart';
 import 'package:atur_dompet/modules/debts/views/debt_page.dart';
@@ -81,10 +82,10 @@ class MainScreen extends StatelessWidget {
           ),
           child: IconButton(
             icon: const Icon(Icons.add, color: Colors.white, size: 30),
-            onPressed: () => controller.changeTabIndex(1),
+            onPressed: () => Get.toNamed(RouteNames.addTransaction),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }

@@ -1,33 +1,100 @@
+import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/core/components/custom_notification.dart';
 import 'package:atur_dompet/core/models/transaction.dart';
 import 'package:atur_dompet/core/repositories/transaction_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
-class TransactionController extends ChangeNotifier {
+class TransactionController extends GetxController {
   final TransactionRepository _repository = TransactionRepository();
 
-  List<Transaction> _transactions = [];
-  bool _isLoading = false;
-  String? _errorMessage;
+  var allTransactions = <Transaction>[].obs;
+  var isLoading = false.obs;
+  // Filter State
+  var searchQuery = ''.obs;
+  var selectedFilter = 'ALL'.obs; // 'ALL', 'INCOME', 'EXPENSE'
 
-  // Getters
-  List<Transaction> get transactions => _transactions;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  @override
+  void onInit() {
+    super.onInit();
+    fetchTransactions();
+  }
 
   // Get Transactions (TRX-04)
   Future<void> fetchTransactions() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+    isLoading.value = true;
 
     try {
-      _transactions = await _repository.getTransactions();
+      final data = await _repository.getTransactions();
+      allTransactions.value = data;
     } catch (e) {
-      _errorMessage = e.toString();
+      CustomNotification.showError(e.toString());
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      isLoading.value = false;
     }
+  }
+
+  // Setter Search Query
+  void setSearchQuery(String query) {
+    searchQuery.value = query;
+  }
+
+  // Setter Selected Filter
+  void setSelectedFilter(String filter) {
+    selectedFilter.value = filter;
+  }
+
+  // Getter Filtered Transactions
+  List<Transaction> get filteredTransactions {
+    return allTransactions.where((trx) {
+      // 1. Filter by Type
+      bool matchType = true;
+      if (selectedFilter.value == 'INCOME') {
+        matchType = trx.type == 'income';
+      } else if (selectedFilter.value == 'EXPENSE') {
+        matchType = trx.type == 'expense';
+      }
+
+      // 2. Filter by Search Query
+      bool matchSearch = true;
+      if (searchQuery.value.isNotEmpty) {
+        final query = searchQuery.value.toLowerCase();
+        final note = trx.note?.toLowerCase() ?? '';
+
+        matchSearch = note.contains(query);
+      }
+
+      return matchType && matchSearch;
+    }).toList();
+  }
+
+  // GETTER: Group by Date (TODAY, YESTERDAY, dsb)
+  Map<String, List<Transaction>> get groupedTransactions {
+    final Map<String, List<Transaction>> groups = {};
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    for (var trx in filteredTransactions) {
+      final date = trx.transactionDate;
+      final trxDay = DateTime(date.year, date.month, date.day);
+
+      String groupKey;
+      if (trxDay == today) {
+        groupKey = 'TODAY';
+      } else if (trxDay == yesterday) {
+        groupKey = 'YESTERDAY';
+      } else {
+        groupKey = DateFormat('DD MMM yyyy').format(date).toUpperCase();
+      }
+
+      if (!groups.containsKey(groupKey)) {
+        groups[groupKey] = [];
+      }
+      groups[groupKey]!.add(trx);
+    }
+
+    return groups;
   }
 
   // Record Expense (TRX-02)
@@ -75,8 +142,7 @@ class TransactionController extends ChangeNotifier {
     required DateTime date,
   }) async {
     if (sourceWalletId == destinationWalletId) {
-      _errorMessage = "Dompet asal dan tujuan tidak boleh sama.";
-      notifyListeners();
+      CustomNotification.showError(Dictionary.failSameSourceFund);
       return false;
     }
 
@@ -100,8 +166,7 @@ class TransactionController extends ChangeNotifier {
     String? note,
     required DateTime date,
   }) async {
-    _isLoading = true;
-    notifyListeners();
+    isLoading.value = true;
 
     try {
       await _repository.recordTransaction(
@@ -116,11 +181,12 @@ class TransactionController extends ChangeNotifier {
 
       await fetchTransactions();
 
+      Get.back();
+      CustomNotification.showSuccess(Dictionary.succAddTransaction);
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
-      _isLoading = false;
-      notifyListeners();
+      CustomNotification.showError(Dictionary.failAddTransaction);
+      isLoading.value = false;
 
       return false;
     }
@@ -137,8 +203,7 @@ class TransactionController extends ChangeNotifier {
     String? note,
     required DateTime date,
   }) async {
-    _isLoading = true;
-    notifyListeners();
+    isLoading.value = true;
 
     try {
       await _repository.updateTransaction(
@@ -153,12 +218,12 @@ class TransactionController extends ChangeNotifier {
       );
 
       await fetchTransactions();
-
+      Get.back();
+      CustomNotification.showSuccess(Dictionary.succUpdateTransaction);
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
-      _isLoading = false;
-      notifyListeners();
+      CustomNotification.showError(Dictionary.failUpdateTransaction);
+      isLoading.value = false;
 
       return false;
     }
@@ -166,19 +231,17 @@ class TransactionController extends ChangeNotifier {
 
   // Delete Transaction (TRX-06)
   Future<bool> deleteTransaction(String transactionId) async {
-    _isLoading = true;
-    notifyListeners();
+    isLoading.value = true;
 
     try {
       await _repository.deleteTransaction(transactionId);
 
       await fetchTransactions();
-      
+      CustomNotification.showSuccess(Dictionary.succDelTransaction);
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
-      _isLoading = false;
-      notifyListeners();
+      CustomNotification.showError(Dictionary.failDelTransaction);
+      isLoading.value = false;
 
       return false;
     }

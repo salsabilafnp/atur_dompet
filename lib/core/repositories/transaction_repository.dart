@@ -9,7 +9,7 @@ class TransactionRepository {
     try {
       final response = await _supabase
           .from('transactions')
-          .select()
+          .select('*, categories(name, icon, color), wallets(*)')
           .order('transaction_date', ascending: false);
 
       return response.map((data) => Transaction.fromJson(data)).toList();
@@ -41,7 +41,7 @@ class TransactionRepository {
         'note': note,
         'transaction_date': date.toIso8601String(),
       });
-      } catch (e) {
+    } catch (e) {
       throw Exception('Gagal mencatat transaksi: $e');
     }
   }

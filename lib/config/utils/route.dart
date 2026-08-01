@@ -6,6 +6,9 @@ import 'package:atur_dompet/modules/auth/views/register_page.dart';
 import 'package:atur_dompet/modules/auth/views/splash_screen.dart';
 import 'package:atur_dompet/modules/categories/controllers/category_controller.dart';
 import 'package:atur_dompet/modules/categories/views/category_page.dart';
+import 'package:atur_dompet/modules/transactions/controllers/record_trx_controller.dart';
+import 'package:atur_dompet/modules/transactions/controllers/transaction_controller.dart';
+import 'package:atur_dompet/modules/transactions/views/recorrd_trx_page.dart';
 import 'package:atur_dompet/modules/wallets/controllers/wallet_controller.dart';
 import 'package:get/get.dart';
 
@@ -53,13 +56,14 @@ class Routes {
       page: () => MainScreen(),
       binding: BindingsBuilder(() {
         Get.put(WalletController());
+        Get.put(CategoryController());
+        Get.put(TransactionController());
+        Get.put(RecordTrxController());
+        // Get.put(DebtController());
       }),
     ),
     GetPage(name: RouteNames.profile, page: () => ProfilePage()),
-    // GetPage(
-    //   name: RouteNames.addTransaction,
-    //   page: () => AddTransactionScreen(),
-    // ),
+    GetPage(name: RouteNames.addTransaction, page: () => RecorrdTrxPage()),
     // GetPage(
     //   name: RouteNames.editTransaction,
     //   page: () => EditTransactionScreen(),

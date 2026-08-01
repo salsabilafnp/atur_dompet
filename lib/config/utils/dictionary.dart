@@ -34,6 +34,7 @@ class Dictionary {
 
   /// Transaction
   // Options
+  static const String all = 'All';
   static const String income = 'Income';
   static const String expense = 'Expense';
   static const String incomeCategory = 'Income Categories';
@@ -50,6 +51,22 @@ class Dictionary {
   static const String addTransaction = 'Add Transaction';
   static const String editTransaction = 'Edit Transaction';
   static const String transactionDetail = 'Transaction Detail';
+  static const String deleteTransaction = 'Delete Transaction';
+  static const String searchTransaction = 'Search Transaction';
+  static const String transactionType = 'Transaction Type';
+  static const String transactionCategory = 'Transaction Category';
+  static const String sourceWallet = 'Source Wallet';
+  static const String destinationWallet = 'Destination Wallet';
+  static const String amount = 'Amount';
+  static const String note = 'Note';
+  static const String transactionDate = 'Transaction Date';
+  static const String amountLess = 'Amount need to be more than 0';
+  static const String walletRequired = 'Choose source wallet first';
+  static const String destinationWalletRequired =
+      'Choose destination wallet first';
+  static const String walletNotSame =
+      'Source wallet and destination wallet must be different';
+  static const String categoryRequired = 'Choose category first';
   // Category
   static const String addCategory = 'Add Category';
   static const String editCategory = 'Edit Category';
@@ -74,11 +91,11 @@ class Dictionary {
   static const String editDebtLog = 'Edit Debt Log';
 
   /// Notification
-  static const String noCategory = 'No category data.';
-  static const String noWallet = 'No wallet data.';
-  static const String noTransaction = 'No transaction data.';
-  static const String noDebt = 'No debts data.';
-  static const String noLoan = 'No loans data.';
+  static const String noCategory = 'No category data found.';
+  static const String noWallet = 'No wallet data found.';
+  static const String noTransaction = 'No transaction data found.';
+  static const String noDebt = 'No debts data found.';
+  static const String noLoan = 'No loans data found.';
   // Alert
   static const String succLogin = 'Login successfully';
   static const String succRegister = 'Register successfully';
@@ -106,6 +123,8 @@ class Dictionary {
   static const String failResetPassword = 'Update password failed';
   static const String failChangePassword = 'Change password failed';
   static const String failAddTransaction = 'Add transaction failed';
+  static const String failTransfer = 'Transfer failed';
+  static const String failSameSourceFund = 'Same source and destination wallet';
   static const String failAddCategory = 'Add category failed';
   static const String failAddWallet = 'Add wallet failed';
   static const String failAddDebts = 'Add debts failed';

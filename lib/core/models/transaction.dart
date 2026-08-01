@@ -9,6 +9,11 @@ class Transaction {
   final String? note;
   final DateTime transactionDate;
 
+  // Fields from JOIN with Category table
+  final String? categoryName;
+  final String? categoryIcon;
+  final String? categoryColor;
+
   Transaction({
     required this.id,
     required this.userId,
@@ -19,9 +24,14 @@ class Transaction {
     required this.amount,
     this.note,
     required this.transactionDate,
+    this.categoryName,
+    this.categoryIcon,
+    this.categoryColor,
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
+    final categoryData = json['categories'] as Map<String, dynamic>?;
+
     return Transaction(
       id: json['id'] as String,
       userId: json['user_id'] as String,
@@ -32,6 +42,9 @@ class Transaction {
       amount: (json['amount'] as num).toDouble(),
       note: json['note'] as String?,
       transactionDate: DateTime.parse(json['transaction_date'] as String),
+      categoryName: categoryData?['name'] as String?,
+      categoryIcon: categoryData?['icon'] as String?,
+      categoryColor: categoryData?['color'] as String?,
     );
   }
 
