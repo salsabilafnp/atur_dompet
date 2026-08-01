@@ -22,48 +22,51 @@ class CategoryPage extends GetView<CategoryController> {
             child: CircularProgressIndicator(color: Colors.black),
           );
         }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // CREATE BUTTON
-              SizedBox(
-                width: .infinity,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  iconAlignment: IconAlignment.end,
-                  label: Text(Dictionary.addCategoryBtn),
-                  onPressed: () => _showCategoryDialog(context),
+        return RefreshIndicator(
+          onRefresh: () => controller.fetchCategories(),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // CREATE BUTTON
+                SizedBox(
+                  width: .infinity,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.add),
+                    iconAlignment: IconAlignment.end,
+                    label: Text(Dictionary.addCategoryBtn),
+                    onPressed: () => _showCategoryDialog(context),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
+                const SizedBox(height: 40),
 
-              // INCOME CATEGORIES
-              Text(
-                Dictionary.incomeCategory.toUpperCase(),
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 15),
-              _buildCategoryList(
-                context,
-                categories: controller.incomeCategories,
-                hasShadow: true,
-              ),
-              const SizedBox(height: 40),
+                // INCOME CATEGORIES
+                Text(
+                  Dictionary.incomeCategory.toUpperCase(),
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 15),
+                _buildCategoryList(
+                  context,
+                  categories: controller.incomeCategories,
+                  hasShadow: true,
+                ),
+                const SizedBox(height: 40),
 
-              // EXPENSE CATEGORIES
-              Text(
-                Dictionary.expenseCategory.toUpperCase(),
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 15),
-              _buildCategoryList(
-                context,
-                categories: controller.expenseCategories,
-                hasShadow: false,
-              ),
-            ],
+                // EXPENSE CATEGORIES
+                Text(
+                  Dictionary.expenseCategory.toUpperCase(),
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 15),
+                _buildCategoryList(
+                  context,
+                  categories: controller.expenseCategories,
+                  hasShadow: false,
+                ),
+              ],
+            ),
           ),
         );
       }),
