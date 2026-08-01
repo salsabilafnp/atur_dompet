@@ -54,6 +54,17 @@ class RecordTransactionPage extends StatelessWidget {
                   _buildTypeToggle(),
                   const SizedBox(height: 15),
 
+                  // Title Section
+                  _buildSectionTitle(Dictionary.title),
+                  TextField(
+                    controller: controller.titleController,
+                    decoration: const InputDecoration(
+                      hintText: Dictionary.titleHint,
+                      border: InputBorder.none,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
                   // Conditional Sections based on Type
                   Obx(() {
                     if (controller.formType.value == 'transfer') {
@@ -148,7 +159,6 @@ class RecordTransactionPage extends StatelessWidget {
           CurrencyInputFormatter(),
         ],
         decoration: InputDecoration(
-          prefixText: 'Rp ',
           prefixStyle: Get.textTheme.headlineMedium,
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
@@ -212,17 +222,6 @@ class RecordTransactionPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Title Section
-        _buildSectionTitle(Dictionary.title),
-        TextField(
-          controller: controller.titleController,
-          decoration: const InputDecoration(
-            hintText: Dictionary.titleHint,
-            border: InputBorder.none,
-          ),
-        ),
-        const SizedBox(height: 20),
-
         // Source Wallet Section
         _buildSectionTitle(Dictionary.sourceWallet),
         _buildWalletDropdown(isSource: true),

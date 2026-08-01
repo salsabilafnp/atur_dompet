@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:atur_dompet/config/utils/dictionary.dart';
 import 'package:atur_dompet/core/components/custom_notification.dart';
 import 'package:atur_dompet/core/models/category_transaction.dart';
@@ -20,7 +22,7 @@ class TransactionController extends GetxController {
   var isLoading = false.obs;
   // Filter State
   var searchQuery = ''.obs;
-  var selectedFilter = 'ALL'.obs; // 'ALL', 'INCOME', 'EXPENSE', 'TRANSFER'
+  var selectedFilter = Dictionary.all.obs;
   var selectedDateFilter = 'THIS_MONTH'.obs;
   var customStartDate = DateTime.now().obs;
   var customEndDate = DateTime.now().obs;
@@ -108,6 +110,8 @@ class TransactionController extends GetxController {
         matchType = trx.type == 'income';
       } else if (selectedFilter.value == Dictionary.expense) {
         matchType = trx.type == 'expense';
+      } else if (selectedFilter.value == Dictionary.transfer) {
+        matchType = trx.type == 'transfer';
       }
 
       // 2. Filter by Search Query
@@ -226,8 +230,11 @@ class TransactionController extends GetxController {
 
   // Submit Transaction (TRX-01, TRX-02, TRX-03)
   Future<void> submitTransaction() async {
-    final amount =
-        double.tryParse(amountController.text.replaceAll('.', '')) ?? 0;
+    /// Validate
+    // Delete extra characters
+    final rawAmount = amountController.text.replaceAll(RegExp(r'[^0-9]'), '');
+    final amount = double.tryParse(rawAmount) ?? 0;
+
     if (amount <= 0 || selectedWalletId.isEmpty) {
       CustomNotification.showError(Dictionary.failAddTransaction);
       return;
@@ -293,12 +300,12 @@ class TransactionController extends GetxController {
     try {
       await _repository.recordTransaction(
         walletId: walletId,
-        destinationWalletId: destinationWalletId ?? '',
-        categoryId: categoryId ?? '',
+        destinationWalletId: destinationWalletId,
+        categoryId: categoryId,
         type: type,
         amount: amount,
-        note: note ?? '',
-        title: title ?? '',
+        note: note,
+        title: title,
         date: date,
       );
 
@@ -309,6 +316,8 @@ class TransactionController extends GetxController {
       CustomNotification.showSuccess(Dictionary.succAddTransaction);
       return true;
     } catch (e) {
+      debugPrint('Error Execute Transaction: $e');
+      log('Error Execute Transaction: $e');
       CustomNotification.showError(Dictionary.failAddTransaction);
       return false;
     } finally {
@@ -334,12 +343,12 @@ class TransactionController extends GetxController {
       await _repository.updateTransaction(
         transactionId,
         walletId: walletId,
-        destinationWalletId: destinationWalletId ?? '',
-        categoryId: categoryId ?? '',
+        destinationWalletId: destinationWalletId,
+        categoryId: categoryId,
         type: type,
         amount: amount,
-        note: note ?? '',
-        title: title ?? '',
+        note: note,
+        title: title,
         date: date,
       );
 

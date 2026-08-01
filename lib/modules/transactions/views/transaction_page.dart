@@ -8,7 +8,6 @@ import 'package:atur_dompet/core/models/transaction.dart';
 import 'package:atur_dompet/modules/transactions/controllers/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class TransactionsPage extends GetView<TransactionController> {
   const TransactionsPage({super.key});
@@ -57,13 +56,13 @@ class TransactionsPage extends GetView<TransactionController> {
                 Obx(
                   () => Row(
                     children: [
-                      _buildFilterBtn(Dictionary.all.toUpperCase()),
+                      _buildFilterBtn(Dictionary.all),
                       const SizedBox(width: 10),
-                      _buildFilterBtn(Dictionary.income.toUpperCase()),
+                      _buildFilterBtn(Dictionary.income),
                       const SizedBox(width: 10),
-                      _buildFilterBtn(Dictionary.expense.toUpperCase()),
+                      _buildFilterBtn(Dictionary.expense),
                       const SizedBox(width: 10),
-                      _buildFilterBtn(Dictionary.transfer.toUpperCase()),
+                      _buildFilterBtn(Dictionary.transfer),
                     ],
                   ),
                 ),
@@ -169,7 +168,7 @@ class TransactionsPage extends GetView<TransactionController> {
           border: Border.all(color: Colors.black, width: 2),
         ),
         child: Text(
-          title,
+          title.toUpperCase(),
           style: TextStyle(
             color: isSelected ? Colors.white : Colors.black,
             fontWeight: FontWeight.w900,
