@@ -27,60 +27,63 @@ class WalletsPage extends GetView<WalletController> {
             child: CircularProgressIndicator(color: Colors.black),
           );
         }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // CREATE BUTTON
-              SizedBox(
-                width: .infinity,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  iconAlignment: IconAlignment.end,
-                  label: Text(Dictionary.addWalletBtn),
-                  onPressed: () => _showWalletDialog(context),
+        return RefreshIndicator(
+          onRefresh: () => controller.fetchWallets(),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // CREATE BUTTON
+                SizedBox(
+                  width: .infinity,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.add),
+                    iconAlignment: IconAlignment.end,
+                    label: Text(Dictionary.addWalletBtn),
+                    onPressed: () => _showWalletDialog(context),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
+                const SizedBox(height: 40),
 
-              // EXPENSES
-              Row(
-                children: [
-                  const Icon(Icons.credit_card_outlined, color: Colors.red),
-                  const SizedBox(width: 15),
-                  Text(
-                    Dictionary.main.toUpperCase(),
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              _buildWalletList(
-                context,
-                wallet: controller.mainWallets,
-                hasShadow: true,
-              ),
-              const SizedBox(height: 40),
+                // EXPENSES
+                Row(
+                  children: [
+                    const Icon(Icons.credit_card_outlined, color: Colors.red),
+                    const SizedBox(width: 15),
+                    Text(
+                      Dictionary.main.toUpperCase(),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                _buildWalletList(
+                  context,
+                  wallet: controller.mainWallets,
+                  hasShadow: true,
+                ),
+                const SizedBox(height: 40),
 
-              // SAVINGS
-              Row(
-                children: [
-                  const Icon(Icons.savings_outlined, color: Colors.green),
-                  const SizedBox(width: 15),
-                  Text(
-                    Dictionary.savings.toUpperCase(),
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              _buildWalletList(
-                context,
-                wallet: controller.savingsWallets,
-                hasShadow: false,
-              ),
-            ],
+                // SAVINGS
+                Row(
+                  children: [
+                    const Icon(Icons.savings_outlined, color: Colors.green),
+                    const SizedBox(width: 15),
+                    Text(
+                      Dictionary.savings.toUpperCase(),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                _buildWalletList(
+                  context,
+                  wallet: controller.savingsWallets,
+                  hasShadow: false,
+                ),
+              ],
+            ),
           ),
         );
       }),

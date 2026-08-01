@@ -86,54 +86,81 @@ class TransactionsPage extends GetView<TransactionController> {
                 return const Center(child: Text(Dictionary.noTransaction));
               }
 
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 10,
-                ),
-                itemCount: groups.keys.length,
-                itemBuilder: (context, index) {
-                  final dateKey = groups.keys.elementAt(index);
-                  final trxs = groups[dateKey]!;
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Group Header (TODAY / YESTERDAY)
-                        Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Colors.black, width: 3),
+              return RefreshIndicator(
+                color: Colors.black,
+                onRefresh: () async {
+                  await controller.fetchTransactions();
+                },
+                child: groups.isEmpty
+                    ? ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: Center(
+                              child: Text(Dictionary.noTransaction),
                             ),
                           ),
-                          padding: const EdgeInsets.only(bottom: 5),
-                          margin: const EdgeInsets.only(bottom: 15),
-                          child: Text(
-                            dateKey,
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
+                        ],
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 10,
                         ),
+                        itemCount: groups.keys.length,
+                        itemBuilder: (context, index) {
+                          final dateKey = groups.keys.elementAt(index);
+                          final trxs = groups[dateKey]!;
 
-                        // Group List Box
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black, width: 2),
-                          ),
-                          child: Column(
-                            children: trxs.asMap().entries.map((entry) {
-                              final Transaction trx = entry.value;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Group Header (TODAY / YESTERDAY)
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.black,
+                                        width: 3,
+                                      ),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  child: Text(
+                                    dateKey,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.headlineSmall,
+                                  ),
+                                ),
 
-                              return _buildTransactionItem(trx);
-                            }).toList(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                                // Group List Box
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: trxs.asMap().entries.map((entry) {
+                                      final Transaction trx = entry.value;
+
+                                      return _buildTransactionItem(trx);
+                                    }).toList(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
               );
             }),
           ),
