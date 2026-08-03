@@ -189,7 +189,7 @@ class TransactionController extends GetxController {
       } else if (trxDay == yesterday) {
         groupKey = 'YESTERDAY';
       } else {
-        groupKey = DateFormat('DD MMM yyyy').format(date).toUpperCase();
+        groupKey = DateFormat('dd MMM yyyy').format(date).toUpperCase();
       }
 
       if (!groups.containsKey(groupKey)) {
@@ -209,7 +209,7 @@ class TransactionController extends GetxController {
       formType.value = trx.type;
       amountController.text = trx.amount.toInt().toString();
       noteController.text = trx.note ?? '';
-      titleController.text = trx.title ?? '';
+      titleController.text = trx.title;
       selectedWalletId.value = trx.walletId;
       selectedDestinationWalletId.value = trx.destinationWalletId ?? '';
       selectedCategoryId.value = trx.categoryId ?? '';
