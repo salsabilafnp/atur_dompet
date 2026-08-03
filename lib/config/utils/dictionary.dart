@@ -3,6 +3,12 @@ class Dictionary {
   static const String appDescription =
       'An app to help you manage your finances as a personal financial tracker and management simple tool.';
 
+  /// About App
+  static const String developedBy = 'Developed by';
+  static const String developerName = 'Salsabila FNP (Sabil)';
+  static const String linkedIn = 'Linkedin';
+  static const String contactEmail = 'Email';
+
   /// Splash Screen
   static const String splashTitle =
       'Manage your finances easily and effectively';
@@ -26,13 +32,14 @@ class Dictionary {
   /// Menu
   static const String home = 'Home';
   static const String profile = 'Profile';
+  static const String settings = 'Settings';
   static const String transactions = 'Transactions';
   static const String category = 'Manage Categories';
   static const String wallets = 'Wallets';
   static const String debts = 'Debts & Loans';
   static const String debtLogs = 'Debt Logs';
   static const String accountSecurity = 'Account Security';
-  static const String setReminderBtn = 'Set Reminder';
+  static const String setReminder = 'Reminder';
   static const String aboutBtn = 'About App';
 
   /// Home
@@ -178,6 +185,8 @@ class Dictionary {
   static const String loginBtn = 'Login';
   static const String registerBtn = 'Register';
   static const String logoutBtn = 'Logout';
+  static const String setReminderBtn = 'Set Reminder';
+  static const String aboutAppBtn = 'About App';
   static const String updateProfileBtn = 'Update Profile';
   static const String forgotPasswordBtn = 'Forgot Password?';
   static const String updatePasswordBtn = 'Update Password';

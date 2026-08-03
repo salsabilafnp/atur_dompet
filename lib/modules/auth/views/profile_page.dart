@@ -1,13 +1,14 @@
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/route.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
+import 'package:atur_dompet/core/components/custom_notification.dart';
 import 'package:atur_dompet/modules/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ProfilePage extends StatelessWidget {
-  final AuthController authC = Get.find<AuthController>();
-
-  ProfilePage({super.key});
+class ProfilePage extends GetView<AuthController> {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +20,16 @@ class ProfilePage extends StatelessWidget {
             children: [
               // Card Profile
               Obx(() {
-                if (authC.isLoading.value && authC.userProfile.value == null) {
+                if (controller.isLoading.value &&
+                    controller.userProfile.value == null) {
                   return const Center(
                     child: CircularProgressIndicator(color: Colors.black),
                   );
                 }
 
                 // Data Profile
-                final profile = authC.userProfile.value;
-                final user = authC.currentUser.value;
+                final profile = controller.userProfile.value;
+                final user = controller.currentUser.value;
 
                 // Default fallback string jika data null
                 final nickname =
@@ -112,9 +114,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         icon: Icon(Icons.edit),
                         iconAlignment: IconAlignment.end,
-                        onPressed: () {
-                          // TODO: Update Profile
-                        },
+                        onPressed: () => _showUpdateProfileDialog(context),
                       ),
                       Divider(thickness: 1, height: 5),
 
@@ -126,9 +126,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         icon: Icon(Icons.lock_reset_outlined),
                         iconAlignment: IconAlignment.end,
-                        onPressed: () {
-                          // TODO: Update Password
-                        },
+                        onPressed: () => _showUpdatePasswordDialog(context),
                       ),
                       Divider(thickness: 1, height: 5),
 
@@ -146,7 +144,7 @@ class ProfilePage extends StatelessWidget {
                           foregroundColor: Colors.red,
                         ),
                         onPressed: () {
-                          authC.deleteAccount();
+                          controller.deleteAccount();
                         },
                       ),
                     ],
@@ -154,6 +152,85 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
+              // About App
+              SizedBox(height: 20),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                child: SizedBox(
+                  width: .infinity,
+                  child: ElevatedButton.icon(
+                    label: Text(Dictionary.aboutAppBtn),
+                    icon: Icon(Icons.info_outline),
+                    iconAlignment: IconAlignment.end,
+                    onPressed: () {
+                      showAboutDialog(
+                        context: Get.context!,
+                        applicationName: Dictionary.appTitle,
+                        applicationVersion: '1.0.0', // version
+                        applicationIcon: Image.asset(
+                          'assets/images/logo-aturdompet.png',
+                          width: 50,
+                          height: 50,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.account_balance_wallet,
+                            size: 50,
+                          ),
+                        ),
+                        children: [
+                          // App Description
+                          const Text(Dictionary.appDescription),
+                          const Divider(thickness: 1),
+                          // Contact Developer
+                          Row(
+                            children: [
+                              Text(Dictionary.developedBy),
+                              SizedBox(width: 10),
+                              Text(
+                                Dictionary.developerName,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              const SizedBox(width: 5),
+                              Expanded(
+                                child: TextButton.icon(
+                                  label: const Text(Dictionary.linkedIn),
+                                  icon: const Icon(Icons.link),
+                                  iconAlignment: IconAlignment.end,
+                                  onPressed: () {
+                                    launchUrl(
+                                      Uri.parse(RouteNames.linkedinUrl),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: TextButton.icon(
+                                  label: const Text(Dictionary.contactEmail),
+                                  icon: const Icon(Icons.mail_outline),
+                                  iconAlignment: IconAlignment.end,
+                                  onPressed: () {
+                                    launchUrl(
+                                      Uri.parse(RouteNames.emailUrl),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              // Logout Button
               SizedBox(height: 20),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 15),
@@ -164,7 +241,7 @@ class ProfilePage extends StatelessWidget {
                     icon: Icon(Icons.logout),
                     iconAlignment: IconAlignment.end,
                     onPressed: () {
-                      authC.logout();
+                      controller.logout();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -176,6 +253,167 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Update Profile
+  void _showUpdateProfileDialog(BuildContext context) {
+    // Pre-fill data
+    controller.nameC.text = controller.userProfile.value?.nickname ?? '';
+    controller.emailC.text = controller.currentUser.value?.email ?? '';
+
+    Get.defaultDialog(
+      title: Dictionary.updateProfileBtn.toUpperCase(),
+      titlePadding: const EdgeInsets.symmetric(vertical: 20),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Input Name
+            TextField(
+              controller: controller.nameC,
+              decoration: const InputDecoration(
+                labelText: Dictionary.nickname,
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            // Input Email
+            TextField(
+              controller: controller.emailC,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: Dictionary.email,
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Update Button
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                onPressed: controller.isLoading.value
+                    ? null
+                    : () {
+                        if (controller.nameC.text.isEmpty ||
+                            controller.emailC.text.isEmpty) {
+                          CustomNotification.showError(
+                            Dictionary.formIsRequired,
+                          );
+                          return;
+                        }
+
+                        controller.updateProfile(
+                          controller.nameC.text,
+                          controller.emailC.text,
+                        );
+                      },
+                child: controller.isLoading.value
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        Dictionary.updateBtn,
+                        style: TextStyle(color: Colors.white),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Update Password
+  void _showUpdatePasswordDialog(BuildContext context) {
+    // Reset state & text form sebelum dialog muncul
+    controller.newPasswordC.clear();
+    controller.newConfirmPasswordC.clear();
+    controller.isObsecurePass.value = true;
+    controller.isObsecureConfirmPass.value = true;
+
+    Get.defaultDialog(
+      title: Dictionary.updatePasswordBtn.toUpperCase(),
+      titlePadding: const EdgeInsets.symmetric(vertical: 20),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Input New Password
+          Obx(
+            () => TextField(
+              controller: controller.newPasswordC,
+              obscureText: controller.isObsecurePass.value,
+              decoration: InputDecoration(
+                labelText: Dictionary.newPassword,
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    controller.isObsecurePass.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () => controller.changePasswordVisibility(),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+
+          // Input Confirm Password
+          Obx(
+            () => TextField(
+              controller: controller.newConfirmPasswordC,
+              obscureText: controller.isObsecureConfirmPass.value,
+              decoration: InputDecoration(
+                labelText: Dictionary.confirmPassword,
+                prefixIcon: const Icon(Icons.lock_reset),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    controller.isObsecureConfirmPass.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () => controller.changeConfirmPasswordVisibility(),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Update Button
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+              onPressed: controller.isLoading.value
+                  ? null
+                  : () {
+                      if (controller.nameC.text.isEmpty ||
+                          controller.emailC.text.isEmpty) {
+                        CustomNotification.showError(Dictionary.formIsRequired);
+                        return;
+                      }
+
+                      controller.updateProfile(
+                        controller.nameC.text,
+                        controller.emailC.text,
+                      );
+                    },
+              child: controller.isLoading.value
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Text(
+                      Dictionary.updateBtn,
+                      style: TextStyle(color: Colors.white),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
