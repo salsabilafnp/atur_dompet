@@ -94,14 +94,22 @@ class CategoryPage extends GetView<CategoryController> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: categories.map((category) {
-          final iconData = CategoryHelper.getIconData(category.icon);
-          final color = CategoryHelper.hexToColor(category.color);
-
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Row(
               children: [
-                Icon(iconData, color: color),
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: CategoryHelper.hexToColor(category.color),
+                    border: Border.all(color: Colors.black, width: 2),
+                  ),
+                  child: Icon(
+                    CategoryHelper.getIconData(category.icon),
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
                 const SizedBox(width: 15),
                 Expanded(child: Text(category.name.toUpperCase())),
                 // POPUP MENU (MORE VERTICAL)

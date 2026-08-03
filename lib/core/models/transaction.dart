@@ -4,10 +4,10 @@ class Transaction {
   final String walletId;
   final String? destinationWalletId; // for transfer only
   final String? categoryId; // Nullable for transfer
+  final String title;
   final String type; // 'income', 'expense', 'transfer', 'debt', 'loan'
   final double amount;
   final String? note;
-  final String? title;
   final DateTime transactionDate;
 
   // Fields from JOIN with Category table
@@ -21,10 +21,10 @@ class Transaction {
     required this.walletId,
     this.destinationWalletId,
     this.categoryId,
+    required this.title,
     required this.type,
     required this.amount,
     this.note,
-    this.title,
     required this.transactionDate,
     this.categoryName,
     this.categoryIcon,
@@ -40,10 +40,10 @@ class Transaction {
       walletId: json['wallet_id'] as String,
       destinationWalletId: json['destination_wallet_id'] as String?,
       categoryId: json['category_id'] as String?,
+      title: json['title'] as String,
       type: json['type'] as String,
       amount: (json['amount'] as num).toDouble(),
       note: json['note'] as String?,
-      title: json['title'] as String?,
       transactionDate: DateTime.parse(json['transaction_date'] as String),
       categoryName: categoryData?['name'] as String?,
       categoryIcon: categoryData?['icon'] as String?,
@@ -56,11 +56,11 @@ class Transaction {
       'wallet_id': walletId,
       'destination_wallet_id': destinationWalletId,
       'category_id': categoryId,
+      'title': title,
       'type': type,
       'amount': amount,
       'note': note,
-      'title': title,
-      'transaction_date': transactionDate.toIso8601String(),
+      'transaction_date': transactionDate.toIso8601String().split('T')[0],
     };
   }
 }

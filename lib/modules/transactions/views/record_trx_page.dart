@@ -50,10 +50,6 @@ class RecordTransactionPage extends StatelessWidget {
                   _buildAmountInput(),
                   const SizedBox(height: 15),
 
-                  // Type Toggle Section (Expense, Income, Transfer)
-                  _buildTypeToggle(),
-                  const SizedBox(height: 15),
-
                   // Title Section
                   _buildSectionTitle(Dictionary.title),
                   TextField(
@@ -63,6 +59,10 @@ class RecordTransactionPage extends StatelessWidget {
                       border: InputBorder.none,
                     ),
                   ),
+                  const SizedBox(height: 15),
+
+                  // Type Toggle Section (Expense, Income, Transfer)
+                  _buildTypeToggle(),
                   const SizedBox(height: 15),
 
                   // Conditional Sections based on Type

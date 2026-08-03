@@ -212,13 +212,13 @@ class TransactionsPage extends GetView<TransactionController> {
     final amountPrefix = isExpense ? '- ' : '+ ';
 
     // Fallback if note is empty
-    final title = (trx.title != null && trx.title!.isNotEmpty)
-        ? trx.title!.toUpperCase()
+    final title = (trx.title.isNotEmpty)
+        ? trx.title.toUpperCase()
         : trx.type.toUpperCase();
 
     return InkWell(
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: Colors.black, width: 2)),
         ),
@@ -226,16 +226,17 @@ class TransactionsPage extends GetView<TransactionController> {
           children: [
             // Icon Box
             Container(
-              width: 40,
-              height: 40,
+              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: CategoryHelper.hexToColor(trx.categoryColor),
                 border: Border.all(color: Colors.black, width: 2),
               ),
               child: Icon(
-                CategoryHelper.getIconData(trx.categoryIcon),
-                color: CategoryHelper.hexToColor(trx.categoryColor),
-                size: 25,
+                trx.type == 'transfer'
+                    ? Icons.swap_vert
+                    : CategoryHelper.getIconData(trx.categoryIcon),
+                color: Colors.white,
+                size: 20,
               ),
             ),
             const SizedBox(width: 15),
