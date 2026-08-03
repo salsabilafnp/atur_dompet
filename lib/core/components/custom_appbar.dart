@@ -54,9 +54,6 @@ class CustomAppBar {
               case 'reminder':
                 _showSetReminderDialog();
                 break;
-              case 'about':
-                _showAboutAppDialog();
-                break;
             }
           },
           itemBuilder: (BuildContext context) => [
@@ -66,7 +63,7 @@ class CustomAppBar {
                 children: [
                   Icon(Icons.person_outline, color: Colors.black),
                   SizedBox(width: 10),
-                  Text('Profile Page'),
+                  Text(Dictionary.profile),
                 ],
               ),
             ),
@@ -79,17 +76,7 @@ class CustomAppBar {
                     color: Colors.black,
                   ),
                   SizedBox(width: 10),
-                  Text('Set Reminder'),
-                ],
-              ),
-            ),
-            const PopupMenuItem<String>(
-              value: 'about',
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, color: Colors.black),
-                  SizedBox(width: 10),
-                  Text('About'),
+                  Text(Dictionary.setReminderBtn),
                 ],
               ),
             ),
@@ -132,25 +119,5 @@ class CustomAppBar {
         snackPosition: SnackPosition.BOTTOM,
       );
     }
-  }
-
-  // Helper: About App
-  static void _showAboutAppDialog() {
-    showAboutDialog(
-      context: Get.context!,
-      applicationName: Dictionary.appTitle,
-      applicationVersion: '1.0.0',
-      applicationIcon: Image.asset(
-        'assets/images/logo-aturdompet.png',
-        width: 50,
-        height: 50,
-        errorBuilder: (_, __, ___) =>
-            const Icon(Icons.account_balance_wallet, size: 50),
-      ),
-      children: [
-        const SizedBox(height: 10),
-        const Text(Dictionary.appDescription),
-      ],
-    );
   }
 }

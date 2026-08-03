@@ -18,7 +18,7 @@ wallet:wallets!transactions_wallet_id_fkey (*),
 destination_wallet:wallets!transactions_destination_wallet_id_fkey (*)
             ''')
           .eq('user_id', userId)
-          .order('transaction_date', ascending: false);
+          .order('created_at', ascending: false);
 
       return response.map((data) => Transaction.fromJson(data)).toList();
     } catch (e) {

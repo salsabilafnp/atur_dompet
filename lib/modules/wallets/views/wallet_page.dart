@@ -44,12 +44,23 @@ class WalletsPage extends GetView<WalletController> {
                     onPressed: () => _showWalletDialog(context),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
 
                 // EXPENSES
                 Row(
                   children: [
-                    const Icon(Icons.credit_card_outlined, color: Colors.red),
+                    Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        border: Border.all(color: Colors.black, width: 2),
+                      ),
+                      child: Icon(
+                        Icons.credit_card_outlined,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
                     const SizedBox(width: 15),
                     Text(
                       Dictionary.main.toUpperCase(),
@@ -68,7 +79,18 @@ class WalletsPage extends GetView<WalletController> {
                 // SAVINGS
                 Row(
                   children: [
-                    const Icon(Icons.savings_outlined, color: Colors.green),
+                    Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        border: Border.all(color: Colors.black, width: 2),
+                      ),
+                      child: Icon(
+                        Icons.savings_outlined,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
                     const SizedBox(width: 15),
                     Text(
                       Dictionary.savings.toUpperCase(),
