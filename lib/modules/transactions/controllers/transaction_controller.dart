@@ -119,9 +119,10 @@ class TransactionController extends GetxController {
       bool matchSearch = true;
       if (searchQuery.value.isNotEmpty) {
         final query = searchQuery.value.toLowerCase();
+        final title = trx.title.toLowerCase();
         final note = trx.note?.toLowerCase() ?? '';
 
-        matchSearch = note.contains(query);
+        matchSearch = note.contains(query) || title.contains(query);
       }
 
       // 3. Filter by Date
