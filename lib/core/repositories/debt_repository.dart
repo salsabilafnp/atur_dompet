@@ -1,3 +1,4 @@
+import 'package:atur_dompet/config/utils/enum.dart';
 import 'package:atur_dompet/core/models/debt.dart';
 import 'package:atur_dompet/core/models/debt_log.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -89,9 +90,11 @@ class DebtRepository {
       final userId = _supabase.auth.currentUser!.id;
 
       // Logics
-      // If repayment ('borrow'), tipe: 'expense'
-      // Jika repayment ('lend'), tipe: 'income'
-      final trxType = type == 'borrow' ? 'expense' : 'income';
+      // If repayment ('borrow'), tipe: TransactionType.expense
+      // Jika repayment ('lend'), tipe: TransactionType.income
+      final trxType = type == 'borrow'
+          ? TransactionType.expense
+          : TransactionType.income;
 
       // 1. Insert to tabel transactions & return ID
       final trxResponse = await _supabase

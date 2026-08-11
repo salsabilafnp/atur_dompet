@@ -5,7 +5,8 @@ class Transaction {
   final String? destinationWalletId; // for transfer only
   final String? categoryId; // Nullable for transfer
   final String title;
-  final String type; // 'income', 'expense', 'transfer', 'debt', 'loan'
+  final String
+  type; // TransactionType.income, TransactionType.expense, TransactionType.transfer, 'debt', 'loan'
   final double amount;
   final String? note;
   final DateTime transactionDate;

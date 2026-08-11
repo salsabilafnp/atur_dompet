@@ -1,6 +1,7 @@
 import 'package:atur_dompet/config/utils/category_helper.dart';
 import 'package:atur_dompet/config/utils/currency_input_formatter.dart';
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/enum.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
 import 'package:atur_dompet/core/models/transaction.dart';
 import 'package:atur_dompet/modules/transactions/controllers/transaction_controller.dart';
@@ -67,7 +68,7 @@ class RecordTransactionPage extends StatelessWidget {
 
                   // Conditional Sections based on Type
                   Obx(() {
-                    if (controller.formType.value == 'transfer') {
+                    if (controller.formType.value == TransactionType.transfer) {
                       return _buildTransferSection();
                     } else {
                       return _buildExpenseIncomeSection();
@@ -170,23 +171,23 @@ class RecordTransactionPage extends StatelessWidget {
   // TOGGLE TYPE TRX (Expense, Income, Transfer)
   Widget _buildTypeToggle() {
     return Obx(() {
-      final isTransfer = controller.formType.value == 'transfer';
+      final isTransfer = controller.formType.value == TransactionType.transfer;
       return Row(
         children: [
           _toggleBtn(
             Dictionary.expense,
-            controller.formType.value == 'expense',
-            () => controller.formType.value = 'expense',
+            controller.formType.value == TransactionType.expense,
+            () => controller.formType.value = TransactionType.expense,
           ),
           _toggleBtn(
             Dictionary.income,
-            controller.formType.value == 'income',
-            () => controller.formType.value = 'income',
+            controller.formType.value == TransactionType.income,
+            () => controller.formType.value = TransactionType.income,
           ),
           _toggleBtn(
             Dictionary.transfer,
             isTransfer,
-            () => controller.formType.value = 'transfer',
+            () => controller.formType.value = TransactionType.transfer,
           ),
         ],
       );

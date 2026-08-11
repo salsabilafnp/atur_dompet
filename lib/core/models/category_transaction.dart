@@ -2,7 +2,7 @@ class CategoryTransaction {
   final String id;
   final String userId;
   final String name;
-  final String type; // 'income' atau 'expense'
+  final String type; // TransactionType.income atau TransactionType.expense
   final String? icon;
   final String? color;
 

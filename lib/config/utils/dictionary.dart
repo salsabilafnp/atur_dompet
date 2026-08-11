@@ -48,14 +48,14 @@ class Dictionary {
   static const String totalMain = 'Total Main Wallet';
   static const String totalSavings = 'Total Savings';
   static const String expenseChart = 'Expenses by Category';
-  static const String savingsChart = 'Savings by Category';
+  static const String savingsChart = 'Savings Wallets';
   static const String summaryPDF = 'Export Summary (PDF)';
   // Filter
   static const String today = 'Today';
-  static const String sevenDays = '7 Days';
+  static const String sevenDays = 'A Week';
   static const String thisMonth = 'This Month';
   static const String allTime = 'All Time';
-  static const String customDate = 'Custom Date';
+  static const String customDate = 'Custom';
 
   /// Transaction
   static const String selectColor = 'Select Color';

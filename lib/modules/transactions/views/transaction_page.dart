@@ -1,6 +1,7 @@
 import 'package:atur_dompet/config/theme/app_theme.dart';
 import 'package:atur_dompet/config/utils/category_helper.dart';
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/enum.dart';
 import 'package:atur_dompet/config/utils/format_helper.dart';
 import 'package:atur_dompet/config/utils/route.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
@@ -35,20 +36,91 @@ class TransactionsPage extends GetView<TransactionController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Search Input
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black, width: 1),
-                  ),
-                  child: TextField(
-                    onChanged: controller.setSearchQuery,
-                    decoration: InputDecoration(
-                      hintText: Dictionary.searchTransaction,
-                      prefixIcon: const Icon(Icons.search, color: Colors.black),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                Row(
+                  children: [
+                    // Search Input
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                        child: TextField(
+                          onChanged: controller.setSearchQuery,
+                          decoration: InputDecoration(
+                            hintText: Dictionary.searchTransaction,
+                            prefixIcon: const Icon(
+                              Icons.search,
+                              color: Colors.black,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 10),
+
+                    // Dropdown Filter Date
+                    Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 3),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: Obx(
+                          () => DropdownButton<String>(
+                            value: controller.selectedDateFilter.value,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            onChanged: (String? newValue) async {
+                              if (newValue == FilterRange.custom) {
+                                // DateRangePicker, if CUSTOM
+                                final DateTimeRange? picked =
+                                    await showDateRangePicker(
+                                      context: context,
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime(2100),
+                                    );
+                                if (picked != null) {
+                                  controller.setCustomDateRange(
+                                    picked.start,
+                                    picked.end,
+                                  );
+                                }
+                              } else if (newValue != null) {
+                                controller.setDateFilter(newValue);
+                              }
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: FilterRange.today,
+                                child: Text(Dictionary.today),
+                              ),
+                              DropdownMenuItem(
+                                value: FilterRange.thisWeek,
+                                child: Text(Dictionary.sevenDays),
+                              ),
+                              DropdownMenuItem(
+                                value: FilterRange.thisMonth,
+                                child: Text(Dictionary.thisMonth),
+                              ),
+                              DropdownMenuItem(
+                                value: FilterRange.allTime,
+                                child: Text(Dictionary.allTime),
+                              ),
+                              DropdownMenuItem(
+                                value: FilterRange.custom,
+                                child: Text(Dictionary.customDate),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 15),
 
@@ -132,7 +204,7 @@ class TransactionsPage extends GetView<TransactionController> {
                                   padding: const EdgeInsets.only(bottom: 5),
                                   margin: const EdgeInsets.only(bottom: 15),
                                   child: Text(
-                                    dateKey,
+                                    dateKey.toUpperCase(),
                                     style: Theme.of(
                                       context,
                                     ).textTheme.headlineSmall,
@@ -207,7 +279,9 @@ class TransactionsPage extends GetView<TransactionController> {
 
   // Transaction Item
   Widget _buildTransactionItem(Transaction trx) {
-    final isExpense = trx.type == 'expense' || trx.type == 'transfer';
+    final isExpense =
+        trx.type == TransactionType.expense ||
+        trx.type == TransactionType.transfer;
     final amountColor = isExpense ? AppTheme.error : AppTheme.success;
     final amountPrefix = isExpense ? '- ' : '+ ';
 
@@ -232,7 +306,7 @@ class TransactionsPage extends GetView<TransactionController> {
                 border: Border.all(color: Colors.black, width: 2),
               ),
               child: Icon(
-                trx.type == 'transfer'
+                trx.type == TransactionType.transfer
                     ? Icons.swap_vert
                     : CategoryHelper.getIconData(trx.categoryIcon),
                 color: Colors.white,
@@ -254,7 +328,7 @@ class TransactionsPage extends GetView<TransactionController> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "${trx.type.toUpperCase()} ${trx.type == 'transfer' ? "" : "- ${trx.categoryName!.toUpperCase()}"}",
+                    "${trx.type.toUpperCase()} ${trx.type == TransactionType.transfer ? "" : "- ${trx.categoryName!.toUpperCase()}"}",
                     style: Theme.of(Get.context!).textTheme.bodySmall,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

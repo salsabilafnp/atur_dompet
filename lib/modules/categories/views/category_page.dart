@@ -1,5 +1,6 @@
 import 'package:atur_dompet/config/utils/category_helper.dart';
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/enum.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
 import 'package:atur_dompet/core/components/custom_notification.dart';
 import 'package:atur_dompet/core/models/category_transaction.dart';
@@ -173,7 +174,7 @@ class CategoryPage extends GetView<CategoryController> {
     final nameController = TextEditingController(
       text: isEdit ? category.name : '',
     );
-    var selectedType = (isEdit ? category.type : 'expense').obs;
+    var selectedType = (isEdit ? category.type : TransactionType.expense).obs;
     var selectedIcon =
         (isEdit && category.icon != null ? category.icon! : 'others').obs;
     var selectedColor =
@@ -215,11 +216,11 @@ class CategoryPage extends GetView<CategoryController> {
                 SegmentedButton<String>(
                   segments: const [
                     ButtonSegment(
-                      value: 'income',
+                      value: TransactionType.income,
                       label: Text(Dictionary.income),
                     ),
                     ButtonSegment(
-                      value: 'expense',
+                      value: TransactionType.expense,
                       label: Text(Dictionary.expense),
                     ),
                   ],
