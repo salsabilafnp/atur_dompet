@@ -1,4 +1,6 @@
+import 'package:atur_dompet/config/utils/format_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CategoryHelper {
   // 1. Icon Picker
@@ -73,11 +75,92 @@ class CategoryHelper {
 class CategoryChartItem {
   final String categoryName;
   final int percentage; // Dalam persen, misal 50
+  double amount;
   final Color segmentColor;
 
   CategoryChartItem({
     required this.categoryName,
     required this.percentage,
+    this.amount = 0.0,
     required this.segmentColor,
   });
+}
+
+// Show Detail Data
+void showChartDetailSheet(CategoryChartItem data) {
+  Get.bottomSheet(
+    Container(
+      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black, width: 2),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 50,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: data.segmentColor,
+                  border: Border.all(color: Colors.black, width: 2),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Text(
+                  data.categoryName.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              Text(
+                '${data.percentage}%',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const Divider(color: Colors.black, thickness: 2, height: 30),
+
+          // Nominal per category
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                data.categoryName.toUpperCase(),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                FormatHelper.currencyFormatter.format(data.amount),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    ),
+    isScrollControlled: true,
+  );
 }

@@ -1,4 +1,5 @@
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/enum.dart';
 import 'package:atur_dompet/core/components/custom_notification.dart';
 import 'package:atur_dompet/core/models/category_transaction.dart';
 import 'package:atur_dompet/core/repositories/category_repository.dart';
@@ -25,8 +26,8 @@ class CategoryController extends GetxController {
     isLoading.value = true;
     try {
       final results = await Future.wait([
-        _repository.getCategories('income'),
-        _repository.getCategories('expense'),
+        _repository.getCategories(TransactionType.income),
+        _repository.getCategories(TransactionType.expense),
       ]);
 
       incomeCategories.assignAll(results[0]);

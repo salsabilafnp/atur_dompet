@@ -1,7 +1,7 @@
 name: atur_dompet
 description: "An app to help you manage your finances as a personal financial tracker and management simple tool."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.2+1
+version: 1.0.3+1
 
 environment:
   sdk: ^3.10.7
@@ -16,6 +16,7 @@ dependencies:
   supabase: ^2.14.0
   supabase_flutter: ^2.16.0
   url_launcher: ^6.3.2
+  fl_chart: ^1.2.0
 
 dev_dependencies:
   flutter_test:

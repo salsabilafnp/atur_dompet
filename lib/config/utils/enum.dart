@@ -10,3 +10,16 @@ class TransactionType {
   static const String loan = 'loan';
   static const String debt = 'debt';
 }
+
+class DebtType {
+  static const String borrow = 'borrow';
+  static const String lend = 'lend';
+}
+
+class FilterRange {
+  static const String today = 'today';
+  static const String thisWeek = 'thisWeek';
+  static const String thisMonth = 'thisMonth';
+  static const String allTime = 'allTime';
+  static const String custom = 'custom';
+}

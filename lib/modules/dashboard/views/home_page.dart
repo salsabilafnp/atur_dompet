@@ -1,8 +1,10 @@
 import 'package:atur_dompet/config/theme/app_theme.dart';
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/enum.dart';
 import 'package:atur_dompet/config/utils/format_helper.dart';
-import 'package:atur_dompet/core/components/category_chart.dart';
+import 'package:atur_dompet/core/components/bar_chart.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
+import 'package:atur_dompet/core/components/pie_chart.dart';
 import 'package:atur_dompet/modules/dashboard/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,7 +19,7 @@ class HomePage extends GetView<HomeController> {
       body: Obx(() {
         if (controller.walletC.isLoading.value ||
             controller.categoryC.isLoading.value ||
-            controller.trxC.isLoading.value) {
+            controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -33,10 +35,11 @@ class HomePage extends GetView<HomeController> {
         double totalIncome = 0;
         double totalExpense = 0;
 
-        for (var trx in controller.trxC.filteredTransactions) {
-          if (trx.type == 'income') {
+        // fltered trx
+        for (var trx in controller.filteredSummaryTransactions) {
+          if (trx.type == TransactionType.income) {
             totalIncome += trx.amount;
-          } else if (trx.type == 'expense') {
+          } else if (trx.type == TransactionType.expense) {
             totalExpense += trx.amount;
           }
         }
@@ -47,7 +50,7 @@ class HomePage extends GetView<HomeController> {
         );
         final expenseChartData = controller.getExpenseChartData(
           controller.categoryC.expenseCategories,
-          controller.trxC.filteredTransactions,
+          controller.filteredSummaryTransactions,
         );
 
         return SingleChildScrollView(
@@ -64,7 +67,7 @@ class HomePage extends GetView<HomeController> {
                   padding: const EdgeInsets.all(15),
                   child: Row(
                     children: [
-                      // Total Income
+                      // Total Main Wallet
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +81,7 @@ class HomePage extends GetView<HomeController> {
                                 totalMainBalance,
                               ),
                               style: Theme.of(context).textTheme.headlineSmall!
-                                  .copyWith(color: AppTheme.error),
+                                  .copyWith(color: AppTheme.success),
                             ),
                           ],
                         ),
@@ -98,7 +101,7 @@ class HomePage extends GetView<HomeController> {
                                 totalSavingsBalance,
                               ),
                               style: Theme.of(context).textTheme.headlineSmall!
-                                  .copyWith(color: AppTheme.success),
+                                  .copyWith(color: AppTheme.info),
                             ),
                           ],
                         ),
@@ -129,11 +132,11 @@ class HomePage extends GetView<HomeController> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          value: controller.trxC.selectedDateFilter.value,
+                          value: controller.summaryDateFilter.value,
                           icon: const Icon(Icons.keyboard_arrow_down),
                           style: Theme.of(context).textTheme.bodyMedium,
                           onChanged: (String? newValue) async {
-                            if (newValue == 'CUSTOM') {
+                            if (newValue == FilterRange.custom) {
                               // DateRangePicker, if CUSTOM
                               final DateTimeRange? picked =
                                   await showDateRangePicker(
@@ -142,34 +145,34 @@ class HomePage extends GetView<HomeController> {
                                     lastDate: DateTime(2100),
                                   );
                               if (picked != null) {
-                                controller.trxC.setCustomDateRange(
+                                controller.setSummaryCustomDateRange(
                                   picked.start,
                                   picked.end,
                                 );
                               }
                             } else if (newValue != null) {
-                              controller.trxC.setDateFilter(newValue);
+                              controller.setSummaryDateFilter(newValue);
                             }
                           },
                           items: const [
                             DropdownMenuItem(
-                              value: 'TODAY',
+                              value: FilterRange.today,
                               child: Text(Dictionary.today),
                             ),
                             DropdownMenuItem(
-                              value: '7_DAYS',
+                              value: FilterRange.thisWeek,
                               child: Text(Dictionary.sevenDays),
                             ),
                             DropdownMenuItem(
-                              value: 'THIS_MONTH',
+                              value: FilterRange.thisMonth,
                               child: Text(Dictionary.thisMonth),
                             ),
                             DropdownMenuItem(
-                              value: 'ALL_TIME',
+                              value: FilterRange.allTime,
                               child: Text(Dictionary.allTime),
                             ),
                             DropdownMenuItem(
-                              value: 'CUSTOM',
+                              value: FilterRange.custom,
                               child: Text(Dictionary.customDate),
                             ),
                           ],
@@ -179,91 +182,93 @@ class HomePage extends GetView<HomeController> {
                   ],
                 ),
               ),
+
               // Card Summary Trx (Income, Expense)
               Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Total Income
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                Dictionary.income,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              Text(
-                                "+ ${FormatHelper.currencyFormatter.format(totalIncome)}",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(color: AppTheme.success),
-                              ),
-                            ],
-                          ),
-                          Icon(Icons.arrow_downward, color: AppTheme.success),
-                        ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 10,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Total Income
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.arrow_downward, color: AppTheme.success),
+                            const SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  Dictionary.income,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text(
+                                  "+ ${FormatHelper.currencyFormatter.format(totalIncome)}",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall!
+                                      .copyWith(color: AppTheme.success),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Divider(height: 10, thickness: 2),
-                    // Total Expense
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                Dictionary.expense,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              Text(
-                                "- ${FormatHelper.currencyFormatter.format(totalExpense)}",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(color: AppTheme.error),
-                              ),
-                            ],
-                          ),
-                          Icon(Icons.arrow_upward, color: AppTheme.error),
-                        ],
+                      // Total Expense
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.arrow_upward, color: AppTheme.error),
+                            const SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  Dictionary.expense,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text(
+                                  "- ${FormatHelper.currencyFormatter.format(totalExpense)}",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall!
+                                      .copyWith(color: AppTheme.error),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 15),
 
-              // Chart Distribution (Expenses by Category, Savings by Category)
+              // Chart Distribution (Expenses by Category, Savings Wallets)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Bar Chart Expense
-                    if (expenseChartData.isNotEmpty)
-                      CategoryDistributionChart(
+                    // Pie Chart Expense
+                    if (expenseChartData.isNotEmpty) ...[
+                      PieChartDistribution(
                         title: Dictionary.expenseChart,
                         dataItems: expenseChartData,
-                      )
-                    else
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Text(Dictionary.noCategory),
                       ),
+                    ] else ...[
+                      const Center(child: Text(Dictionary.noCategory)),
+                    ],
                     const SizedBox(height: 20),
 
                     // Bar Chart Savings
                     if (savingsChartData.isNotEmpty)
-                      CategoryDistributionChart(
+                      BarChartDistribution(
                         title: Dictionary.savingsChart,
                         dataItems: savingsChartData,
                       )

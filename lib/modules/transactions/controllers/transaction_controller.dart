@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:atur_dompet/config/utils/dictionary.dart';
+import 'package:atur_dompet/config/utils/enum.dart';
 import 'package:atur_dompet/core/components/custom_notification.dart';
 import 'package:atur_dompet/core/models/category_transaction.dart';
 import 'package:atur_dompet/core/models/transaction.dart';
@@ -23,7 +24,7 @@ class TransactionController extends GetxController {
   // Filter State
   var searchQuery = ''.obs;
   var selectedFilter = Dictionary.all.obs;
-  var selectedDateFilter = 'THIS_MONTH'.obs;
+  var selectedDateFilter = FilterRange.thisMonth.obs;
   var customStartDate = DateTime.now().obs;
   var customEndDate = DateTime.now().obs;
 
@@ -31,7 +32,7 @@ class TransactionController extends GetxController {
   var isEditMode = false.obs;
   var editingTransactionId = ''.obs;
 
-  var formType = 'expense'.obs; // 'INCOME', 'EXPENSE', 'TRANSFER'
+  var formType = TransactionType.expense.obs; // 'INCOME', 'EXPENSE', 'TRANSFER'
   var amountController = TextEditingController();
   var noteController = TextEditingController();
   var titleController = TextEditingController();
@@ -56,7 +57,7 @@ class TransactionController extends GetxController {
 
   // Getter
   List<Wallet> get availableWallets {
-    if (formType.value == 'expense') {
+    if (formType.value == TransactionType.transfer) {
       return _walletC.mainWallets; // Only main wallet
     } else {
       // Income & Transfer from all wallet
@@ -65,9 +66,9 @@ class TransactionController extends GetxController {
   }
 
   List<CategoryTransaction> get availableCategories {
-    if (formType.value == 'transfer') return [];
+    if (formType.value == TransactionType.transfer) return [];
 
-    if (formType.value == 'expense') {
+    if (formType.value == TransactionType.expense) {
       return _categoryC.expenseCategories;
     } else {
       return _categoryC.incomeCategories;
@@ -98,20 +99,20 @@ class TransactionController extends GetxController {
   void setCustomDateRange(DateTime start, DateTime end) {
     customStartDate.value = start;
     customEndDate.value = end;
-    selectedDateFilter.value = 'CUSTOM';
+    selectedDateFilter.value = FilterRange.custom;
   }
 
   // Getter Filtered Transactions
   List<Transaction> get filteredTransactions {
-    return allTransactions.where((trx) {
+    List<Transaction> filtered = allTransactions.where((trx) {
       // 1. Filter by Type
       bool matchType = true;
       if (selectedFilter.value == Dictionary.income) {
-        matchType = trx.type == 'income';
+        matchType = trx.type == TransactionType.income;
       } else if (selectedFilter.value == Dictionary.expense) {
-        matchType = trx.type == 'expense';
+        matchType = trx.type == TransactionType.expense;
       } else if (selectedFilter.value == Dictionary.transfer) {
-        matchType = trx.type == 'transfer';
+        matchType = trx.type == TransactionType.transfer;
       }
 
       // 2. Filter by Search Query
@@ -130,19 +131,19 @@ class TransactionController extends GetxController {
       final today = DateTime(now.year, now.month, now.day);
 
       switch (selectedDateFilter.value) {
-        case 'TODAY':
+        case FilterRange.today:
           final trxDay = DateTime(date.year, date.month, date.day);
           matchDate = trxDay.isAtSameMomentAs(today);
           break;
-        case '7_DAYS':
+        case FilterRange.thisWeek:
           final sevenDaysAgo = today.subtract(const Duration(days: 7));
           matchDate =
               date.isAfter(sevenDaysAgo) || date.isAtSameMomentAs(sevenDaysAgo);
           break;
-        case 'THIS_MONTH':
+        case FilterRange.thisMonth:
           matchDate = date.year == now.year && date.month == now.month;
           break;
-        case 'CUSTOM':
+        case FilterRange.custom:
           // 00:00:00 - 23:59:59
           final start = DateTime(
             customStartDate.value.year,
@@ -162,7 +163,7 @@ class TransactionController extends GetxController {
               (date.isAfter(start) || date.isAtSameMomentAs(start)) &&
               (date.isBefore(end) || date.isAtSameMomentAs(end));
           break;
-        case 'ALL_TIME':
+        case FilterRange.allTime:
         default:
           matchDate = true;
           break;
@@ -170,6 +171,9 @@ class TransactionController extends GetxController {
 
       return matchType && matchSearch && matchDate;
     }).toList();
+
+    filtered.sort((a, b) => b.transactionDate.compareTo(a.transactionDate));
+    return filtered;
   }
 
   // GETTER: Group by Date (TODAY, YESTERDAY, dsb)
@@ -185,7 +189,7 @@ class TransactionController extends GetxController {
 
       String groupKey;
       if (trxDay == today) {
-        groupKey = 'TODAY';
+        groupKey = FilterRange.today;
       } else if (trxDay == yesterday) {
         groupKey = 'YESTERDAY';
       } else {
@@ -217,7 +221,7 @@ class TransactionController extends GetxController {
     } else {
       isEditMode.value = false;
       editingTransactionId.value = '';
-      formType.value = 'expense';
+      formType.value = TransactionType.expense;
       amountController.clear();
       noteController.clear();
       titleController.clear();
@@ -240,13 +244,14 @@ class TransactionController extends GetxController {
       return;
     }
 
-    if (formType.value == 'transfer' &&
+    if (formType.value == TransactionType.transfer &&
         selectedWalletId.value == selectedDestinationWalletId.value) {
       CustomNotification.showError(Dictionary.failSameSourceFund);
       return;
     }
 
-    if (formType.value != 'transfer' && selectedCategoryId.isEmpty) {
+    if (formType.value != TransactionType.transfer &&
+        selectedCategoryId.isEmpty) {
       CustomNotification.showError(Dictionary.failSelectCategory);
       return;
     }
@@ -255,10 +260,10 @@ class TransactionController extends GetxController {
       await updateTransaction(
         transactionId: editingTransactionId.value,
         walletId: selectedWalletId.value,
-        destinationWalletId: formType.value == 'transfer'
+        destinationWalletId: formType.value == TransactionType.transfer
             ? selectedDestinationWalletId.value
             : null,
-        categoryId: formType.value != 'transfer'
+        categoryId: formType.value != TransactionType.transfer
             ? selectedCategoryId.value
             : null,
         type: formType.value,
@@ -270,10 +275,10 @@ class TransactionController extends GetxController {
     } else {
       await _executeTransaction(
         walletId: selectedWalletId.value,
-        destinationWalletId: formType.value == 'transfer'
+        destinationWalletId: formType.value == TransactionType.transfer
             ? selectedDestinationWalletId.value
             : null,
-        categoryId: formType.value != 'transfer'
+        categoryId: formType.value != TransactionType.transfer
             ? selectedCategoryId.value
             : null,
         type: formType.value,
