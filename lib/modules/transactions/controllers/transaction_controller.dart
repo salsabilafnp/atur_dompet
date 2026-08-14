@@ -57,7 +57,7 @@ class TransactionController extends GetxController {
 
   // Getter
   List<Wallet> get availableWallets {
-    if (formType.value == TransactionType.transfer) {
+    if (formType.value == TransactionType.expense) {
       return _walletC.mainWallets; // Only main wallet
     } else {
       // Income & Transfer from all wallet
