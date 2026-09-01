@@ -63,60 +63,18 @@ class TransactionsPage extends GetView<TransactionController> {
                     const SizedBox(width: 10),
 
                     // Dropdown Filter Date
-                    Container(
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 3),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: Obx(
-                          () => DropdownButton<String>(
-                            value: controller.selectedDateFilter.value,
-                            icon: const Icon(Icons.keyboard_arrow_down),
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            onChanged: (String? newValue) async {
-                              if (newValue == FilterRange.custom) {
-                                // DateRangePicker, if CUSTOM
-                                final DateTimeRange? picked =
-                                    await showDateRangePicker(
-                                      context: context,
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2100),
-                                    );
-                                if (picked != null) {
-                                  controller.setCustomDateRange(
-                                    picked.start,
-                                    picked.end,
-                                  );
-                                }
-                              } else if (newValue != null) {
-                                controller.setDateFilter(newValue);
-                              }
-                            },
-                            items: const [
-                              DropdownMenuItem(
-                                value: FilterRange.today,
-                                child: Text(Dictionary.today),
-                              ),
-                              DropdownMenuItem(
-                                value: FilterRange.thisWeek,
-                                child: Text(Dictionary.sevenDays),
-                              ),
-                              DropdownMenuItem(
-                                value: FilterRange.thisMonth,
-                                child: Text(Dictionary.thisMonth),
-                              ),
-                              DropdownMenuItem(
-                                value: FilterRange.allTime,
-                                child: Text(Dictionary.allTime),
-                              ),
-                              DropdownMenuItem(
-                                value: FilterRange.custom,
-                                child: Text(Dictionary.customDate),
-                              ),
-                            ],
-                          ),
+                    InkWell(
+                      onTap: () => _showFilterPopup(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          border: Border.all(color: Colors.black, width: 2),
+                        ),
+                        child: Icon(
+                          Icons.filter_list,
+                          size: 25,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -130,9 +88,9 @@ class TransactionsPage extends GetView<TransactionController> {
                     children: [
                       _buildFilterBtn(Dictionary.all),
                       const SizedBox(width: 10),
-                      _buildFilterBtn(Dictionary.income),
-                      const SizedBox(width: 10),
                       _buildFilterBtn(Dictionary.expense),
+                      const SizedBox(width: 10),
+                      _buildFilterBtn(Dictionary.income),
                       const SizedBox(width: 10),
                       _buildFilterBtn(Dictionary.transfer),
                     ],
@@ -191,7 +149,7 @@ class TransactionsPage extends GetView<TransactionController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Group Header (TODAY / YESTERDAY)
+                                // Group Header
                                 Container(
                                   decoration: const BoxDecoration(
                                     border: Border(
@@ -221,9 +179,7 @@ class TransactionsPage extends GetView<TransactionController> {
                                     ),
                                   ),
                                   child: Column(
-                                    children: trxs.asMap().entries.map((entry) {
-                                      final Transaction trx = entry.value;
-
+                                    children: trxs.map((trx) {
                                       return _buildTransactionItem(trx);
                                     }).toList(),
                                   ),
@@ -306,9 +262,7 @@ class TransactionsPage extends GetView<TransactionController> {
                 border: Border.all(color: Colors.black, width: 2),
               ),
               child: Icon(
-                trx.type == TransactionType.transfer
-                    ? Icons.swap_vert
-                    : CategoryHelper.getIconData(trx.categoryIcon),
+                CategoryHelper.getIconData(trx.categoryIcon),
                 color: Colors.white,
                 size: 20,
               ),
@@ -328,7 +282,7 @@ class TransactionsPage extends GetView<TransactionController> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "${trx.type.toUpperCase()} ${trx.type == TransactionType.transfer ? "" : "- ${trx.categoryName!.toUpperCase()}"}",
+                    "${trx.type.toUpperCase()} ${trx.categoryName != null && trx.categoryName!.isNotEmpty ? "- ${trx.categoryName!.toUpperCase()}" : ""}",
                     style: Theme.of(Get.context!).textTheme.bodySmall,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -344,13 +298,202 @@ class TransactionsPage extends GetView<TransactionController> {
                 color: amountColor,
                 fontWeight: FontWeight.w900,
                 fontFamily: 'monospace',
-                fontSize: 15,
+                fontSize: 16,
               ),
             ),
           ],
         ),
       ),
       onTap: () => Get.toNamed(RouteNames.editTransaction, arguments: trx),
+    );
+  }
+
+  // Filter Button
+  void _showFilterPopup(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Dictionary.filter,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 20),
+
+              // DATE
+              Text(
+                Dictionary.filterByDate,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Obx(
+                () => Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    _buildChipFilter(
+                      Dictionary.today,
+                      controller.selectedDateFilter.value == FilterRange.today,
+                      () => controller.setDateFilter(FilterRange.today),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.sevenDays,
+                      controller.selectedDateFilter.value ==
+                          FilterRange.thisWeek,
+                      () => controller.setDateFilter(FilterRange.thisWeek),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.thisMonth,
+                      controller.selectedDateFilter.value ==
+                          FilterRange.thisMonth,
+                      () => controller.setDateFilter(FilterRange.thisMonth),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.allTime,
+                      controller.selectedDateFilter.value ==
+                          FilterRange.allTime,
+                      () => controller.setDateFilter(FilterRange.allTime),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.customDate,
+                      controller.selectedDateFilter.value == FilterRange.custom,
+                      () async {
+                        final DateTimeRange? picked = await showDateRangePicker(
+                          context: context,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: const ColorScheme.light(
+                                  primary: Colors.black,
+                                  onPrimary: Colors.white,
+                                  onSurface: Colors.black,
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+
+                        if (picked != null) {
+                          controller.setCustomDateRange(
+                            picked.start,
+                            picked.end,
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // CATEGORY
+              Text(
+                Dictionary.filterByCategory,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Obx(() {
+                final categories = controller.allCategories;
+
+                return Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    // All Categories
+                    _buildChipFilter(
+                      Dictionary.all,
+                      controller.selectedCategoryFilter.value.isEmpty,
+                      () => controller.setCategoryFilter(''),
+                      borderColor: Colors.black,
+                    ),
+
+                    // Render daftar kategori yang tersedia
+                    ...categories.map((cat) {
+                      Color customBorderColor;
+                      final type = cat.type.toLowerCase();
+
+                      if (type == 'expense') {
+                        customBorderColor = Colors.red;
+                      } else if (type == 'income') {
+                        customBorderColor = Colors.green;
+                      } else if (type == 'transfer') {
+                        customBorderColor = Colors.blue;
+                      } else {
+                        customBorderColor = Colors.black;
+                      }
+
+                      return _buildChipFilter(
+                        cat.name.capitalizeFirst ?? cat.name,
+                        controller.selectedCategoryFilter.value == cat.id,
+                        () => controller.setCategoryFilter(cat.id),
+                        borderColor: customBorderColor,
+                      );
+                    }),
+                  ],
+                );
+              }),
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  onPressed: () => Get.back(),
+                  child: const Text(
+                    Dictionary.applyFilter,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChipFilter(
+    String title,
+    bool isSelected,
+    VoidCallback onTap, {
+    Color borderColor = Colors.black,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.white,
+          border: Border.all(
+            color: isSelected ? Colors.black : borderColor,
+            width: 2,
+          ),
+        ),
+        child: Text(
+          title.toUpperCase(),
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 }

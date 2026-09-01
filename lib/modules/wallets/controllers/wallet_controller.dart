@@ -41,6 +41,7 @@ class WalletController extends GetxController {
     required String name,
     required String type,
     required double balance,
+    double? pos,
     String? color,
   }) async {
     isLoading.value = true;
@@ -50,6 +51,7 @@ class WalletController extends GetxController {
         name: name,
         type: type,
         balance: balance,
+        pos: pos ?? 0.0,
         color: color,
       );
 
@@ -70,6 +72,7 @@ class WalletController extends GetxController {
     required String newName,
     required String newType,
     double? newBalance,
+    double? newPos,
     String? newColor,
   }) async {
     isLoading.value = true;
@@ -80,6 +83,7 @@ class WalletController extends GetxController {
         name: newName,
         type: newType,
         balance: newBalance,
+        pos: newPos,
         color: newColor,
       );
       await fetchWallets();

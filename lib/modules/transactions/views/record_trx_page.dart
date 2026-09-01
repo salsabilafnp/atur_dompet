@@ -171,23 +171,31 @@ class RecordTransactionPage extends StatelessWidget {
   // TOGGLE TYPE TRX (Expense, Income, Transfer)
   Widget _buildTypeToggle() {
     return Obx(() {
-      final isTransfer = controller.formType.value == TransactionType.transfer;
       return Row(
         children: [
           _toggleBtn(
             Dictionary.expense,
             controller.formType.value == TransactionType.expense,
-            () => controller.formType.value = TransactionType.expense,
+            () {
+              controller.formType.value = TransactionType.expense;
+              controller.selectedCategoryId.value = '';
+            },
           ),
           _toggleBtn(
             Dictionary.income,
             controller.formType.value == TransactionType.income,
-            () => controller.formType.value = TransactionType.income,
+            () {
+              controller.formType.value = TransactionType.income;
+              controller.selectedCategoryId.value = '';
+            },
           ),
           _toggleBtn(
             Dictionary.transfer,
-            isTransfer,
-            () => controller.formType.value = TransactionType.transfer,
+            controller.formType.value == TransactionType.transfer,
+            () {
+              controller.formType.value = TransactionType.transfer;
+              controller.selectedCategoryId.value = '';
+            },
           ),
         ],
       );
@@ -243,6 +251,7 @@ class RecordTransactionPage extends StatelessWidget {
         _buildSectionTitle(Dictionary.sourceWallet),
         _buildWalletDropdown(isSource: true),
         const SizedBox(height: 15),
+
         Container(
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
@@ -254,8 +263,13 @@ class RecordTransactionPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 15),
+
         _buildSectionTitle(Dictionary.destinationWallet),
         _buildWalletDropdown(isSource: false),
+        const SizedBox(height: 15),
+
+        _buildSectionTitle(Dictionary.selectCategory),
+        _buildCategoryGrid(),
       ],
     );
   }

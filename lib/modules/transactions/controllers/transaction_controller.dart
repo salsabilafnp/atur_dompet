@@ -24,7 +24,8 @@ class TransactionController extends GetxController {
   // Filter State
   var searchQuery = ''.obs;
   var selectedFilter = Dictionary.all.obs;
-  var selectedDateFilter = FilterRange.thisMonth.obs;
+  var selectedCategoryFilter = ''.obs;
+  var selectedDateFilter = FilterRange.allTime.obs;
   var customStartDate = DateTime.now().obs;
   var customEndDate = DateTime.now().obs;
 
@@ -65,13 +66,40 @@ class TransactionController extends GetxController {
     }
   }
 
-  List<CategoryTransaction> get availableCategories {
-    if (formType.value == TransactionType.transfer) return [];
+  // Getter Categories
+  List<CategoryTransaction> get allCategories {
+    return [
+      ..._categoryC.expenseCategories,
+      ..._categoryC.incomeCategories,
+      ..._categoryC.transferCategories,
+    ];
+  }
 
-    if (formType.value == TransactionType.expense) {
+  List<CategoryTransaction> get availableCategories {
+    if (formType.value == TransactionType.transfer) {
+      return _categoryC.transferCategories;
+    } else if (formType.value == TransactionType.expense) {
       return _categoryC.expenseCategories;
     } else {
       return _categoryC.incomeCategories;
+    }
+  }
+
+  // Getter Filter Categories
+  List<CategoryTransaction> get filterCategories {
+    if (selectedFilter.value == Dictionary.income) {
+      return _categoryC.incomeCategories;
+    } else if (selectedFilter.value == Dictionary.expense) {
+      return _categoryC.expenseCategories;
+    } else if (selectedFilter.value == Dictionary.transfer) {
+      return _categoryC.transferCategories;
+    } else {
+      // All, merge all categories
+      return [
+        ..._categoryC.expenseCategories,
+        ..._categoryC.incomeCategories,
+        ..._categoryC.transferCategories,
+      ];
     }
   }
 
@@ -91,8 +119,13 @@ class TransactionController extends GetxController {
 
   // Setter Search Query
   void setSearchQuery(String query) => searchQuery.value = query;
+
   // Setter Selected Filter
-  void setSelectedFilter(String filter) => selectedFilter.value = filter;
+  void setSelectedFilter(String filter) {
+    selectedFilter.value = filter;
+    selectedCategoryFilter.value = '';
+  }
+
   // Setter Selected Date Filter
   void setDateFilter(String filter) => selectedDateFilter.value = filter;
 
@@ -101,6 +134,10 @@ class TransactionController extends GetxController {
     customEndDate.value = end;
     selectedDateFilter.value = FilterRange.custom;
   }
+
+  // Setter Category Filter
+  void setCategoryFilter(String categoryId) =>
+      selectedCategoryFilter.value = categoryId;
 
   // Getter Filtered Transactions
   List<Transaction> get filteredTransactions {
@@ -121,7 +158,6 @@ class TransactionController extends GetxController {
         final query = searchQuery.value.toLowerCase();
         final title = trx.title.toLowerCase();
         final note = trx.note?.toLowerCase() ?? '';
-
         matchSearch = note.contains(query) || title.contains(query);
       }
 
@@ -170,7 +206,13 @@ class TransactionController extends GetxController {
           break;
       }
 
-      return matchType && matchSearch && matchDate;
+      // 4. FILTER BY CATEGORY
+      bool matchCategory = true;
+      if (selectedCategoryFilter.value.isNotEmpty) {
+        matchCategory = trx.categoryId == selectedCategoryFilter.value;
+      }
+
+      return matchType && matchSearch && matchDate && matchCategory;
     }).toList();
 
     filtered.sort((a, b) => b.transactionDate.compareTo(a.transactionDate));
@@ -264,9 +306,7 @@ class TransactionController extends GetxController {
         destinationWalletId: formType.value == TransactionType.transfer
             ? selectedDestinationWalletId.value
             : null,
-        categoryId: formType.value != TransactionType.transfer
-            ? selectedCategoryId.value
-            : null,
+        categoryId: selectedCategoryId.value,
         type: formType.value,
         amount: amount,
         note: noteController.text,
@@ -279,9 +319,7 @@ class TransactionController extends GetxController {
         destinationWalletId: formType.value == TransactionType.transfer
             ? selectedDestinationWalletId.value
             : null,
-        categoryId: formType.value != TransactionType.transfer
-            ? selectedCategoryId.value
-            : null,
+        categoryId: selectedCategoryId.value,
         type: formType.value,
         amount: amount,
         note: noteController.text,
