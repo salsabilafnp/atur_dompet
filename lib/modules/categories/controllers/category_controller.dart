@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 class CategoryController extends GetxController {
   final CategoryRepository _repository = CategoryRepository();
 
+  var transferCategories = <CategoryTransaction>[].obs;
   var incomeCategories = <CategoryTransaction>[].obs;
   var expenseCategories = <CategoryTransaction>[].obs;
   var isLoading = false.obs;
@@ -28,10 +29,12 @@ class CategoryController extends GetxController {
       final results = await Future.wait([
         _repository.getCategories(TransactionType.income),
         _repository.getCategories(TransactionType.expense),
+        _repository.getCategories(TransactionType.transfer),
       ]);
 
       incomeCategories.assignAll(results[0]);
       expenseCategories.assignAll(results[1]);
+      transferCategories.assignAll(results[2]);
     } catch (e) {
       CustomNotification.showError(e.toString());
     } finally {

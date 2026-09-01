@@ -19,6 +19,10 @@ class CategoryHelper {
     'freelance': Icons.work,
     'investment': Icons.trending_up,
     'gift': Icons.card_giftcard,
+    // Transfer
+    'money_off': Icons.money_off,
+    'swap_horiz': Icons.swap_horiz,
+    'savings': Icons.savings,
   };
 
   // 2. Predefined Color Picker

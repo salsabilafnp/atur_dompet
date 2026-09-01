@@ -135,6 +135,15 @@ class WalletsPage extends GetView<WalletController> {
         children: wallet.map((wallet) {
           final color = CategoryHelper.hexToColor(wallet.color);
 
+          double posLimit = wallet.pos ?? 0.0;
+          Color limitColor = Colors.black;
+
+          if (posLimit == 0) {
+            limitColor = Colors.blueGrey;
+          } else if (wallet.balance > posLimit) {
+            limitColor = Colors.red;
+          }
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Row(
@@ -152,7 +161,11 @@ class WalletsPage extends GetView<WalletController> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        FormatHelper.currencyFormatter.format(wallet.balance),
+                        "${FormatHelper.currencyFormatter.format(wallet.balance)} / ${FormatHelper.currencyFormatter.format(posLimit)}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: limitColor,
+                        ),
                       ),
                     ],
                   ),
@@ -219,6 +232,9 @@ class WalletsPage extends GetView<WalletController> {
     final initBalanceController = TextEditingController(
       text: isEdit ? wallet.balance.toStringAsFixed(0) : '',
     );
+    final posController = TextEditingController(
+      text: isEdit ? wallet.pos!.toStringAsFixed(0) : '',
+    );
     var selectedType = (isEdit ? wallet.type : 'main').obs;
     var selectedColor =
         (isEdit
@@ -263,6 +279,19 @@ class WalletsPage extends GetView<WalletController> {
                     prefixText: 'Rp ',
                     hintText: '0',
                     labelText: Dictionary.initialBalance,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 15),
+
+                // INPUT POS LIMIT
+                TextField(
+                  controller: posController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    prefixText: 'Rp ',
+                    hintText: '0',
+                    labelText: Dictionary.posLimit,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -336,12 +365,11 @@ class WalletsPage extends GetView<WalletController> {
                             }
 
                             // parse balance
-                            double parsedBalance = 0.0;
-                            if (initBalanceController.text.isNotEmpty) {
-                              parsedBalance =
-                                  double.tryParse(initBalanceController.text) ??
-                                  0.0;
-                            }
+                            double parsedBalance =
+                                double.tryParse(initBalanceController.text) ??
+                                0.0;
+                            double parsedPos =
+                                double.tryParse(posController.text) ?? 0.0;
 
                             // Convert to hext
                             final hexColor = CategoryHelper.colorToHex(
@@ -355,6 +383,7 @@ class WalletsPage extends GetView<WalletController> {
                                 newName: nameController.text.trim(),
                                 newType: selectedType.value,
                                 newBalance: parsedBalance,
+                                newPos: parsedPos,
                                 newColor: hexColor,
                               );
                             } else {
@@ -363,6 +392,7 @@ class WalletsPage extends GetView<WalletController> {
                                 name: nameController.text.trim(),
                                 type: selectedType.value,
                                 balance: parsedBalance,
+                                pos: parsedPos,
                                 color: hexColor,
                               );
                             }

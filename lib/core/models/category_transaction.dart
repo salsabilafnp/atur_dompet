@@ -1,14 +1,14 @@
 class CategoryTransaction {
   final String id;
-  final String userId;
+  final String? userId;
   final String name;
-  final String type; // TransactionType.income atau TransactionType.expense
+  final String type; // income, expense, transfer
   final String? icon;
   final String? color;
 
   CategoryTransaction({
     required this.id,
-    required this.userId,
+    this.userId,
     required this.name,
     required this.type,
     this.icon,
@@ -18,7 +18,7 @@ class CategoryTransaction {
   factory CategoryTransaction.fromJson(Map<String, dynamic> json) {
     return CategoryTransaction(
       id: json['id'] as String,
-      userId: json['user_id'] as String,
+      userId: json['user_id'] as String?,
       name: json['name'] as String,
       type: json['type'] as String,
       icon: json['icon'] as String?,

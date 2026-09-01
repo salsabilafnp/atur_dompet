@@ -51,11 +51,15 @@ class Dictionary {
   static const String savingsChart = 'Savings Wallets';
   static const String summaryPDF = 'Export Summary (PDF)';
   // Filter
+  static const String filter = 'Filter Transactions';
+  static const String applyFilter = 'Apply Filter';
+  static const String filterByDate = 'Filter By Date';
   static const String today = 'Today';
   static const String sevenDays = 'A Week';
   static const String thisMonth = 'This Month';
   static const String allTime = 'All Time';
   static const String customDate = 'Custom';
+  static const String filterByCategory = 'Filter By Category';
 
   /// Transaction
   static const String selectColor = 'Select Color';
@@ -113,6 +117,7 @@ class Dictionary {
   static const String walletName = 'Wallet Name';
   static const String walletType = 'Wallet Type';
   static const String initialBalance = 'Initial Balance';
+  static const String posLimit = 'Balance Limit';
   // Debts
   static const String addDebts = 'Add Debts';
   static const String editDebts = 'Edit Debts';

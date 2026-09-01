@@ -394,16 +394,13 @@ class ProfilePage extends GetView<AuthController> {
               onPressed: controller.isLoading.value
                   ? null
                   : () {
-                      if (controller.nameC.text.isEmpty ||
-                          controller.emailC.text.isEmpty) {
+                      if (controller.newPasswordC.text.isEmpty ||
+                          controller.confirmPasswordC.text.isEmpty) {
                         CustomNotification.showError(Dictionary.formIsRequired);
                         return;
                       }
 
-                      controller.updateProfile(
-                        controller.nameC.text,
-                        controller.emailC.text,
-                      );
+                      controller.updatePassword();
                     },
               child: controller.isLoading.value
                   ? const CircularProgressIndicator(color: Colors.white)

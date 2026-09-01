@@ -27,6 +27,7 @@ class WalletRepository {
     required String name,
     required String type,
     double? balance,
+    double? pos,
     String? color,
   }) async {
     try {
@@ -37,6 +38,7 @@ class WalletRepository {
         'name': name,
         'type': type,
         'balance': balance ?? 0.0,
+        'pos': pos ?? 0.0,
         'color': color ?? '',
       });
     } catch (e) {
@@ -50,6 +52,7 @@ class WalletRepository {
     required String name,
     required String type,
     double? balance,
+    double? pos,
     String? color,
   }) async {
     try {
@@ -59,6 +62,7 @@ class WalletRepository {
             'name': name,
             'type': type,
             'balance': balance ?? 0.0,
+            'pos': pos ?? 0.0,
             'color': color ?? '',
             'updated_at': DateTime.now().toIso8601String(),
           })

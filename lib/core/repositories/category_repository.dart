@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:atur_dompet/core/models/category_transaction.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,14 +9,13 @@ class CategoryRepository {
   // Get Category by type (income/expense) (CAT-01, CAT-02)
   Future<List<CategoryTransaction>> getCategories(String type) async {
     try {
-      final userId = _supabase.auth.currentUser!.id;
-
       final response = await _supabase
           .from('categories')
           .select()
-          .eq('user_id', userId)
           .eq('type', type)
           .order('name', ascending: true);
+
+      log(response.toString());
 
       return response
           .map((data) => CategoryTransaction.fromJson(data))
