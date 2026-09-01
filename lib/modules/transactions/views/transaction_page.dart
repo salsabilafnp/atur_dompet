@@ -317,142 +317,174 @@ class TransactionsPage extends GetView<TransactionController> {
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              Dictionary.filter,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 20),
-
-            // DATE
-            Text(
-              Dictionary.filterByDate,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Obx(
-              () => Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  _buildChipFilter(
-                    Dictionary.today,
-                    controller.selectedDateFilter.value == FilterRange.today,
-                    () => controller.setDateFilter(FilterRange.today),
-                  ),
-                  _buildChipFilter(
-                    Dictionary.sevenDays,
-                    controller.selectedDateFilter.value == FilterRange.thisWeek,
-                    () => controller.setDateFilter(FilterRange.thisWeek),
-                  ),
-                  _buildChipFilter(
-                    Dictionary.thisMonth,
-                    controller.selectedDateFilter.value ==
-                        FilterRange.thisMonth,
-                    () => controller.setDateFilter(FilterRange.thisMonth),
-                  ),
-                  _buildChipFilter(
-                    Dictionary.allTime,
-                    controller.selectedDateFilter.value == FilterRange.allTime,
-                    () => controller.setDateFilter(FilterRange.allTime),
-                  ),
-                  _buildChipFilter(
-                    Dictionary.customDate,
-                    controller.selectedDateFilter.value == FilterRange.custom,
-                    () async {
-                      final DateTimeRange? picked = await showDateRangePicker(
-                        context: context,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: Colors.black,
-                                onPrimary: Colors.white,
-                                onSurface: Colors.black,
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-
-                      if (picked != null) {
-                        controller.setCustomDateRange(picked.start, picked.end);
-                      }
-                    },
-                  ),
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Dictionary.filter,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // CATEGORY
-            Text(
-              Dictionary.filterByCategory,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Obx(() {
-              final categories = controller.availableCategories;
+              // DATE
+              Text(
+                Dictionary.filterByDate,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Obx(
+                () => Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    _buildChipFilter(
+                      Dictionary.today,
+                      controller.selectedDateFilter.value == FilterRange.today,
+                      () => controller.setDateFilter(FilterRange.today),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.sevenDays,
+                      controller.selectedDateFilter.value ==
+                          FilterRange.thisWeek,
+                      () => controller.setDateFilter(FilterRange.thisWeek),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.thisMonth,
+                      controller.selectedDateFilter.value ==
+                          FilterRange.thisMonth,
+                      () => controller.setDateFilter(FilterRange.thisMonth),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.allTime,
+                      controller.selectedDateFilter.value ==
+                          FilterRange.allTime,
+                      () => controller.setDateFilter(FilterRange.allTime),
+                    ),
+                    _buildChipFilter(
+                      Dictionary.customDate,
+                      controller.selectedDateFilter.value == FilterRange.custom,
+                      () async {
+                        final DateTimeRange? picked = await showDateRangePicker(
+                          context: context,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: const ColorScheme.light(
+                                  primary: Colors.black,
+                                  onPrimary: Colors.white,
+                                  onSurface: Colors.black,
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
 
-              return Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  // All Categories
-                  _buildChipFilter(
-                    Dictionary.all,
-                    controller.selectedCategoryFilter.value.isEmpty,
-                    () => controller.setCategoryFilter(''),
-                  ),
-
-                  // Render daftar kategori yang tersedia
-                  ...categories.map((cat) {
-                    return _buildChipFilter(
-                      cat.name.capitalizeFirst ?? cat.name,
-                      controller.selectedCategoryFilter.value == cat.id,
-                      () => controller.setCategoryFilter(cat.id),
-                    );
-                  }),
-                ],
-              );
-            }),
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                onPressed: () => Get.back(),
-                child: const Text(
-                  Dictionary.applyFilter,
-                  style: TextStyle(color: Colors.white),
+                        if (picked != null) {
+                          controller.setCustomDateRange(
+                            picked.start,
+                            picked.end,
+                          );
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+
+              // CATEGORY
+              Text(
+                Dictionary.filterByCategory,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Obx(() {
+                final categories = controller.allCategories;
+
+                return Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    // All Categories
+                    _buildChipFilter(
+                      Dictionary.all,
+                      controller.selectedCategoryFilter.value.isEmpty,
+                      () => controller.setCategoryFilter(''),
+                      borderColor: Colors.black,
+                    ),
+
+                    // Render daftar kategori yang tersedia
+                    ...categories.map((cat) {
+                      Color customBorderColor;
+                      final type = cat.type.toLowerCase();
+
+                      if (type == 'expense') {
+                        customBorderColor = Colors.red;
+                      } else if (type == 'income') {
+                        customBorderColor = Colors.green;
+                      } else if (type == 'transfer') {
+                        customBorderColor = Colors.blue;
+                      } else {
+                        customBorderColor = Colors.black;
+                      }
+
+                      return _buildChipFilter(
+                        cat.name.capitalizeFirst ?? cat.name,
+                        controller.selectedCategoryFilter.value == cat.id,
+                        () => controller.setCategoryFilter(cat.id),
+                        borderColor: customBorderColor,
+                      );
+                    }),
+                  ],
+                );
+              }),
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                  ),
+                  onPressed: () => Get.back(),
+                  child: const Text(
+                    Dictionary.applyFilter,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildChipFilter(String title, bool isSelected, VoidCallback onTap) {
+  Widget _buildChipFilter(
+    String title,
+    bool isSelected,
+    VoidCallback onTap, {
+    Color borderColor = Colors.black,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: isSelected ? Colors.black : Colors.white,
-          border: Border.all(color: Colors.black, width: 2),
+          border: Border.all(
+            color: isSelected ? Colors.black : borderColor,
+            width: 2,
+          ),
         ),
         child: Text(
           title.toUpperCase(),

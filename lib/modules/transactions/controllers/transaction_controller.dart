@@ -67,6 +67,14 @@ class TransactionController extends GetxController {
   }
 
   // Getter Categories
+  List<CategoryTransaction> get allCategories {
+    return [
+      ..._categoryC.expenseCategories,
+      ..._categoryC.incomeCategories,
+      ..._categoryC.transferCategories,
+    ];
+  }
+
   List<CategoryTransaction> get availableCategories {
     if (formType.value == TransactionType.transfer) {
       return _categoryC.transferCategories;
