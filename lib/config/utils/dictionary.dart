@@ -25,6 +25,9 @@ class Dictionary {
   static const String confirmPassword = 'Confirm Password';
   static const String formIsRequired = 'Form is required';
   static const String passwordNotMatch = 'Passwords do not match';
+  static const String passwordTooShort =
+      'Password must be at least 6 characters long';
+  static const String invalidEmail = 'Please enter a valid email address';
   static const String forgotPassword = 'Forgot Password';
   static const String resetPassword = 'Reset Password';
   static const String deleteAccount = 'Delete Account';
@@ -46,10 +49,28 @@ class Dictionary {
   static const String summary = 'Summary';
   static const String totalBalance = 'Total Balance';
   static const String totalMain = 'Total Main Wallet';
+  static const String totalIncome = 'Total Income';
+  static const String totalExpense = 'Total Expense';
   static const String totalSavings = 'Total Savings';
   static const String expenseChart = 'Expenses by Category';
   static const String savingsChart = 'Savings Wallets';
   static const String summaryPDF = 'Export Summary (PDF)';
+  static const String exportReport = 'Export Financial Report (Excel)';
+  static const String monthlyReport = 'Monthly report';
+  static const String customDateRange = 'Custom date range';
+  static const String chooseMonth = 'Choose a month';
+  static const String chooseDateRange = 'Choose a date range';
+  static const String selectDateRange = 'Select date range';
+  static const String noTransactionsInRange =
+      'No transactions found in this period';
+  static const String failExportReport = 'Failed to export report';
+  // Report
+  static const String reportTitle = 'Financial Report';
+  static const String periode = 'Periode';
+  static const String startDate = 'Start Date';
+  static const String endDate = 'End Date';
+  static const String noTransactions = 'No transactions found in this period';
+  static const String trxDate = 'Transaction Date';
   // Filter
   static const String filter = 'Filter Transactions';
   static const String applyFilter = 'Apply Filter';
@@ -139,6 +160,8 @@ class Dictionary {
   static const String succRegister = 'Register successfully';
   static const String succUpdateProfile = 'Update profile successfully';
   static const String succResetPassword = 'Update password successfully';
+  static const String succPasswordResetEmail =
+      'Password reset link sent. Please check your email.';
   static const String succChangePassword = 'Change password successfully';
   static const String succAddTransaction = 'Add transaction successfully';
   static const String succAddCategory = 'Add category successfully';

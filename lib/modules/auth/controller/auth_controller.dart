@@ -188,16 +188,31 @@ class AuthController extends GetxController {
 
   // change password (AUTH-04)
   Future<void> updatePassword() async {
-    // check new password & confirm password
-    if (newPasswordC.text != newConfirmPasswordC.text) {
+    final newPassword = newPasswordC.text;
+    final confirmPassword = newConfirmPasswordC.text;
+
+    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      CustomNotification.showError(Dictionary.formIsRequired);
+      return;
+    }
+    if (newPassword.length < 6) {
+      CustomNotification.showError(Dictionary.passwordTooShort);
+      return;
+    }
+    if (newPassword != confirmPassword) {
       CustomNotification.showError(Dictionary.passwordNotMatch);
+      return;
     }
 
     try {
       isLoading.value = true;
-      await _authRepo.updatePassword(newPasswordC.text);
-      clearControllers();
+      await _authRepo.updatePassword(newPassword);
+      newPasswordC.clear();
+      newConfirmPasswordC.clear();
+      isObsecurePass.value = true;
+      isObsecureConfirmPass.value = true;
 
+      Get.back();
       CustomNotification.showSuccess(Dictionary.succChangePassword);
     } on AuthException catch (e) {
       CustomNotification.showError(e.message);
@@ -210,18 +225,23 @@ class AuthController extends GetxController {
 
   // forgot password (AUTH-03)
   Future<void> forgotPassword() async {
-    if (emailC.text.isEmpty) {
+    final email = emailC.text.trim();
+    if (email.isEmpty) {
       CustomNotification.showError(Dictionary.formIsRequired);
+      return;
+    }
+    if (!GetUtils.isEmail(email)) {
+      CustomNotification.showError(Dictionary.invalidEmail);
       return;
     }
 
     try {
       isLoading.value = true;
-      await _authRepo.resetPassword(emailC.text);
-      clearControllers();
+      await _authRepo.resetPassword(email);
+      emailC.clear();
 
-      CustomNotification.showSuccess(Dictionary.succResetPassword);
       Get.back();
+      CustomNotification.showSuccess(Dictionary.succPasswordResetEmail);
     } on AuthException catch (e) {
       CustomNotification.showError(e.message);
     } catch (e) {

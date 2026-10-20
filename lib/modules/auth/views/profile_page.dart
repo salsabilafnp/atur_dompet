@@ -386,28 +386,22 @@ class ProfilePage extends GetView<AuthController> {
           const SizedBox(height: 20),
 
           // Update Button
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-              onPressed: controller.isLoading.value
-                  ? null
-                  : () {
-                      if (controller.newPasswordC.text.isEmpty ||
-                          controller.confirmPasswordC.text.isEmpty) {
-                        CustomNotification.showError(Dictionary.formIsRequired);
-                        return;
-                      }
-
-                      controller.updatePassword();
-                    },
-              child: controller.isLoading.value
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      Dictionary.updateBtn,
-                      style: TextStyle(color: Colors.white),
-                    ),
+          Obx(
+            () => SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                onPressed: controller.isLoading.value
+                    ? null
+                    : controller.updatePassword,
+                child: controller.isLoading.value
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        Dictionary.updatePasswordBtn,
+                        style: TextStyle(color: Colors.white),
+                      ),
+              ),
             ),
           ),
         ],

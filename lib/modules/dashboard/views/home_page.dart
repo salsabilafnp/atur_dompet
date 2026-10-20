@@ -6,6 +6,7 @@ import 'package:atur_dompet/core/components/bar_chart.dart';
 import 'package:atur_dompet/core/components/custom_appbar.dart';
 import 'package:atur_dompet/core/components/pie_chart.dart';
 import 'package:atur_dompet/modules/dashboard/controllers/home_controller.dart';
+import 'package:atur_dompet/modules/dashboard/views/report_export_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -282,13 +283,25 @@ class HomePage extends GetView<HomeController> {
               ),
               const SizedBox(height: 20),
 
-              // Button Summary PDF
-              // ElevatedButton.icon(
-              //   onPressed: () {},
-              //   icon: const Icon(Icons.picture_as_pdf),
-              //   iconAlignment: IconAlignment.end,
-              //   label: const Text(Dictionary.summaryPDF),
-              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (_) => ReportExportDialog(
+                        transactions: controller.trxC.allTransactions.toList(),
+                        savingsWalletIds: controller.walletC.savingsWallets
+                            .map((wallet) => wallet.id)
+                            .toSet(),
+                      ),
+                    ),
+                    icon: const Icon(Icons.file_download_outlined),
+                    label: Text(Dictionary.exportReport),
+                  ),
+                ),
+              ),
             ],
           ),
         );

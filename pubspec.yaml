@@ -17,6 +17,10 @@ dependencies:
   supabase_flutter: ^2.16.0
   url_launcher: ^6.3.2
   fl_chart: ^1.2.0
+  cross_file: ^0.3.4+2
+  excel: ^4.0.6
+  pdf: ^3.11.3
+  share_plus: ^10.1.4
 
 dev_dependencies:
   flutter_test:
